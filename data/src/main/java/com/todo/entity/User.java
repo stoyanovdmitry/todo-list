@@ -1,6 +1,8 @@
 package com.todo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,7 +17,6 @@ public class User {
 	@Column(unique = true, nullable = false)
 	private String username;
 
-	@JsonIgnore
 	@Column(nullable = false)
 	private String password;
 
