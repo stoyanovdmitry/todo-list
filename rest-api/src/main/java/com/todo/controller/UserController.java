@@ -1,25 +1,30 @@
 package com.todo.controller;
 
 import com.todo.entity.User;
-import com.todo.exception.NotFoundException;
 import com.todo.exception.ConflictException;
 import com.todo.repository.UserRepository;
+import com.todo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
+	private final UserRepository userRepository;
+
+	private final UserUtil userUtil;
+
 	@Autowired
-	private UserRepository userRepository;
+	public UserController(UserRepository userRepository, UserUtil userUtil) {
+		this.userRepository = userRepository;
+		this.userUtil = userUtil;
+	}
 
 	@RequestMapping("/{username}")
 	public User getUserByUsername(@PathVariable String username) {
-		return getIfPresent(username);
+		return userUtil.getUserIfPresent(username);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -29,14 +34,5 @@ public class UserController {
 		} catch (DataIntegrityViolationException e) {
 			throw new ConflictException();
 		}
-	}
-
-	private User getIfPresent(String username) {
-		Optional<User> optionalUser = userRepository.findByUsername(username);
-
-		if (!optionalUser.isPresent())
-			throw new NotFoundException();
-
-		return optionalUser.get();
 	}
 }
