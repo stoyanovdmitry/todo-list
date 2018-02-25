@@ -11,6 +11,7 @@ public class Todo {
 	@GeneratedValue
 	private int id;
 
+	@Column(nullable = false)
 	private String text;
 
 	private boolean completed;

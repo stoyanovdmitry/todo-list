@@ -2,10 +2,7 @@ package com.todo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -15,9 +12,11 @@ public class User {
 	@GeneratedValue
 	private int id;
 
+	@Column(unique = true, nullable = false)
 	private String username;
 
 	@JsonIgnore
+	@Column(nullable = false)
 	private String password;
 
 	@OneToMany(mappedBy = "user")
