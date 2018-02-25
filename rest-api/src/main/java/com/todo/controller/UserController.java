@@ -22,7 +22,8 @@ public class UserController {
 		this.userUtil = userUtil;
 	}
 
-	@RequestMapping("/{username}")
+	@RequestMapping(value = "/{username}",
+			method = RequestMethod.GET)
 	public User getUserByUsername(@PathVariable String username) {
 		return userUtil.getUserIfPresent(username);
 	}
