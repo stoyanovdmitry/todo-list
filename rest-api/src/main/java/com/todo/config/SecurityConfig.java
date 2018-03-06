@@ -1,5 +1,7 @@
 package com.todo.config;
 
+import com.todo.security.JwtAuthenticationFilter;
+import com.todo.security.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,6 +10,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
@@ -25,15 +28,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-			.antMatchers(HttpMethod.POST, "/users", "/users/").permitAll()
-			.antMatchers("/users/{username}/**").access("isAuthenticated() && principal.username == #username")
-			.antMatchers("/**").authenticated()
-			.and()
-//			.httpBasic().authenticationEntryPoint(authenticationEntryPoint)
-			.httpBasic()
+
+		http.cors()
 			.and()
 			.csrf().disable()
-		/*.cors()*/;
+			.authorizeRequests()
+			.antMatchers(HttpMethod.POST, "/users").permitAll()
+			.antMatchers("/users/{username}/**").access("isAuthenticated() && principal == #username")
+			.anyRequest().authenticated()
+			.and()
+			.addFilter(new JwtAuthenticationFilter(authenticationManager()))
+			.addFilter(new JwtAuthorizationFilter(authenticationManager()))
+			// this disables session creation on Spring Security
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 }
