@@ -18,7 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -57,10 +56,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 		String token = Jwts.builder()
 						   .setSubject(((UserDetailsImpl) auth.getPrincipal()).getUsername())
-						   .setExpiration(new Date(System.currentTimeMillis() + 864_000_000))
-						   .signWith(SignatureAlgorithm.HS512, "secret".getBytes())
+						   .setExpiration(new Date(System.currentTimeMillis() + JwtConstants.JCT_EXPIRATION))
+						   .signWith(SignatureAlgorithm.HS512, JwtConstants.JWT_SECRET.getBytes())
 						   .compact();
 
-		res.addHeader("Authorization", "Bearer " + token);
+		res.addHeader(JwtConstants.JWT_HEADER, JwtConstants.JWT_PREFIX + token);
 	}
 }

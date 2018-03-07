@@ -13,7 +13,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -28,9 +27,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	protected void doFilterInternal(HttpServletRequest req,
 									HttpServletResponse res,
 									FilterChain chain) throws IOException, ServletException {
-		String header = req.getHeader("Authorization");
+		String header = req.getHeader(JwtConstants.JWT_HEADER);
 
-		if (header == null || !header.startsWith("Bearer ")) {
+		if (header == null || !header.startsWith(JwtConstants.JWT_PREFIX)) {
 			chain.doFilter(req, res);
 			return;
 		}
@@ -42,12 +41,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	}
 
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-		String token = request.getHeader("Authorization");
+		String token = request.getHeader(JwtConstants.JWT_HEADER);
 		if (token != null) {
-			// parse the token.
 			String username = Jwts.parser()
-								  .setSigningKey("secret".getBytes())
-								  .parseClaimsJws(token.replace("Bearer ", ""))
+								  .setSigningKey(JwtConstants.JWT_SECRET.getBytes())
+								  .parseClaimsJws(token.replace(JwtConstants.JWT_PREFIX, ""))
 								  .getBody()
 								  .getSubject();
 
