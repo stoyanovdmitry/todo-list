@@ -19,7 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	UserDetailsService userDetailsService;
+	private UserDetailsService userDetailsService;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -34,11 +34,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.csrf().disable()
 			.authorizeRequests()
 			.antMatchers(HttpMethod.POST, "/users").permitAll()
-			.antMatchers("/users/{username}/**").access("isAuthenticated() && principal == #username")
+			.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+			.antMatchers("/users/{username}/**").access("principal.username == #username || hasRole('ROLE_ADMIN')")
 			.anyRequest().authenticated()
 			.and()
-			.addFilter(new JwtAuthenticationFilter(authenticationManager()))
-			.addFilter(new JwtAuthorizationFilter(authenticationManager()))
+			.addFilter(new JwtAuthenticationFilter(authenticationManager(), userDetailsService))
+			.addFilter(new JwtAuthorizationFilter(authenticationManager(), userDetailsService))
 			// this disables session creation on Spring Security
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}

@@ -9,6 +9,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -22,9 +24,11 @@ import java.util.Date;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	private AuthenticationManager authenticationManager;
+	private UserDetailsService userDetailsService;
 
-	public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
 		this.authenticationManager = authenticationManager;
+		this.userDetailsService = userDetailsService;
 	}
 
 	@Override
@@ -34,10 +38,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			User user = new ObjectMapper()
 					.readValue(req.getInputStream(), User.class);
 
+			UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+
 			return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-					user.getUsername(),
-					user.getPassword(),
-					new ArrayList<>()));
+					userDetails,
+					userDetails.getPassword(),
+					userDetails.getAuthorities()));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -54,6 +60,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 						   .setExpiration(new Date(System.currentTimeMillis() + 864_000_000))
 						   .signWith(SignatureAlgorithm.HS512, "secret".getBytes())
 						   .compact();
+
 		res.addHeader("Authorization", "Bearer " + token);
 	}
 }
