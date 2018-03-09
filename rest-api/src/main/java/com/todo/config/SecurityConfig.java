@@ -1,7 +1,7 @@
 package com.todo.config;
 
-import com.todo.security.JwtAuthenticationFilter;
-import com.todo.security.JwtAuthorizationFilter;
+import com.todo.security.jwt.filter.JwtAuthenticationFilter;
+import com.todo.security.jwt.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

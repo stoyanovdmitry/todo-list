@@ -1,5 +1,6 @@
-package com.todo.security;
+package com.todo.security.jwt.filter;
 
+import com.todo.security.jwt.JwtConstants;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
