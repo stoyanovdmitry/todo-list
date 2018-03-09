@@ -3,7 +3,7 @@ package com.todo.controller;
 import com.todo.entity.User;
 import com.todo.exception.ConflictException;
 import com.todo.repository.UserRepository;
-import com.todo.util.UserUtil;
+import com.todo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
@@ -14,18 +14,18 @@ public class UserController {
 
 	private final UserRepository userRepository;
 
-	private final UserUtil userUtil;
+	private final UserService userService;
 
 	@Autowired
-	public UserController(UserRepository userRepository, UserUtil userUtil) {
+	public UserController(UserRepository userRepository, UserService userService) {
 		this.userRepository = userRepository;
-		this.userUtil = userUtil;
+		this.userService = userService;
 	}
 
 	@RequestMapping(value = "/{username}",
 			method = RequestMethod.GET)
 	public User getUserByUsername(@PathVariable String username) {
-		return userUtil.getUserIfPresent(username);
+		return userService.getUserIfPresent(username);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)

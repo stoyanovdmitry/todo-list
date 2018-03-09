@@ -3,8 +3,8 @@ package com.todo.controller;
 import com.todo.entity.Todo;
 import com.todo.entity.User;
 import com.todo.repository.TodoRepository;
-import com.todo.util.TodoUtil;
-import com.todo.util.UserUtil;
+import com.todo.service.TodoService;
+import com.todo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,20 +16,20 @@ public class TodoController {
 
 	private final TodoRepository todoRepository;
 
-	private final UserUtil userUtil;
-	private final TodoUtil todoUtil;
+	private final UserService userService;
+	private final TodoService todoService;
 
 	@Autowired
-	public TodoController(TodoRepository todoRepository, UserUtil userUtil, TodoUtil todoUtil) {
+	public TodoController(TodoRepository todoRepository, UserService userService, TodoService todoService) {
 		this.todoRepository = todoRepository;
-		this.userUtil = userUtil;
-		this.todoUtil = todoUtil;
+		this.userService = userService;
+		this.todoService = todoService;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public void addTodo(@PathVariable String username,
 						@RequestBody Todo todo) {
-		User user = userUtil.getUserIfPresent(username);
+		User user = userService.getUserIfPresent(username);
 
 		todo.setUser(user);
 		todoRepository.save(todo);
@@ -39,7 +39,7 @@ public class TodoController {
 			method = RequestMethod.DELETE)
 	public void deleteTodo(@PathVariable int id,
 						   @PathVariable String username) {
-		todoUtil.getTodoIfValid(id, username);
+		todoService.getTodoIfValid(id, username);
 		todoRepository.delete(id);
 	}
 
@@ -48,7 +48,7 @@ public class TodoController {
 	public void updateTodo(@PathVariable int id,
 						   @PathVariable String username,
 						   @RequestBody Todo todo) {
-		Todo existTodo = todoUtil.getTodoIfValid(id, username);
+		Todo existTodo = todoService.getTodoIfValid(id, username);
 
 		existTodo.setText(todo.getText());
 		existTodo.setCompleted(todo.isCompleted());
@@ -60,7 +60,7 @@ public class TodoController {
 			method = RequestMethod.GET)
 	public Todo getById(@PathVariable int id,
 						@PathVariable String username) {
-		return todoUtil.getTodoIfValid(id, username);
+		return todoService.getTodoIfValid(id, username);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)

@@ -1,4 +1,4 @@
-package com.todo.util;
+package com.todo.service;
 
 import com.todo.entity.User;
 import com.todo.exception.NotFoundException;
@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserUtil {
+public class UserService {
 
 	private final UserRepository userRepository;
 
 	@Autowired
-	public UserUtil(UserRepository userRepository) {
+	public UserService(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 

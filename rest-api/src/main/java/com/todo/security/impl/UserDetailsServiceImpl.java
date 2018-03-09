@@ -1,7 +1,7 @@
 package com.todo.security.impl;
 
 import com.todo.entity.User;
-import com.todo.util.UserUtil;
+import com.todo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
-	private UserUtil userUtil;
+	private UserService userService;
 
 	@Override
 	public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-		User user = userUtil.getUserIfPresent(s);
+		User user = userService.getUserIfPresent(s);
 		return new UserDetailsImpl(user);
 	}
 }

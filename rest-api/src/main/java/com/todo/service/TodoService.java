@@ -1,4 +1,4 @@
-package com.todo.util;
+package com.todo.service;
 
 import com.todo.entity.Todo;
 import com.todo.entity.User;
@@ -8,16 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TodoUtil {
+public class TodoService {
 
 	@Autowired
-	private UserUtil userUtil;
+	private UserService userService;
 
 	@Autowired
 	private TodoRepository todoRepository;
 
 	public Todo getTodoIfValid(int id, String username) {
-		User user = userUtil.getUserIfPresent(username);
+		User user = userService.getUserIfPresent(username);
 		Todo todo = todoRepository.getOne(id);
 
 		if (user != todo.getUser())
