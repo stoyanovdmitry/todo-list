@@ -1,5 +1,6 @@
 package com.todo.config;
 
+import com.todo.repository.RefreshTokenRepository;
 import com.todo.security.jwt.filter.JwtAuthenticationFilter;
 import com.todo.security.jwt.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	@Autowired
+	private RefreshTokenRepository tokenRepository;
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService);
@@ -38,8 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/users/{username}/**").access("principal.username == #username || hasRole('ROLE_ADMIN')")
 			.anyRequest().authenticated()
 			.and()
-			.addFilter(new JwtAuthenticationFilter(authenticationManager(), userDetailsService))
-			.addFilter(new JwtAuthorizationFilter(authenticationManager(), userDetailsService))
+			.addFilter(new JwtAuthenticationFilter(authenticationManager(), tokenRepository))
+			.addFilter(new JwtAuthorizationFilter(authenticationManager()))
 			// this disables session creation on Spring Security
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}

@@ -1,9 +1,12 @@
 package com.todo.security.jwt.filter;
 
 import com.todo.security.jwt.JwtConstants;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,14 +17,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.todo.security.jwt.JwtConstants.JWT_ADMIN;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-	private UserDetailsService userDetailsService;
-
-	public JwtAuthorizationFilter(AuthenticationManager authManager, UserDetailsService userDetailsService) {
+	public JwtAuthorizationFilter(AuthenticationManager authManager) {
 		super(authManager);
-		this.userDetailsService = userDetailsService;
 	}
 
 	@Override
@@ -44,17 +48,20 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
 		String token = request.getHeader(JwtConstants.JWT_HEADER);
 		if (token != null) {
-			String username = Jwts.parser()
-								  .setSigningKey(JwtConstants.JWT_SECRET.getBytes())
-								  .parseClaimsJws(token.replace(JwtConstants.JWT_PREFIX, ""))
-								  .getBody()
-								  .getSubject();
+			Claims body = Jwts.parser()
+							  .setSigningKey(JwtConstants.JWT_SECRET.getBytes())
+							  .parseClaimsJws(token.replace(JwtConstants.JWT_PREFIX, ""))
+							  .getBody();
 
-			if (username != null) {
-				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-				return new UsernamePasswordAuthenticationToken(userDetails,
-															   userDetails.getPassword(),
-															   userDetails.getAuthorities());
+			if (body.getSubject() != null) {
+				boolean admin = (boolean) body.get(JWT_ADMIN);
+
+				List<GrantedAuthority> authorityList = new ArrayList<>();
+				if (admin) authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+				return new UsernamePasswordAuthenticationToken(body.getSubject(),
+															   null,
+															   authorityList);
 			}
 			return null;
 		}

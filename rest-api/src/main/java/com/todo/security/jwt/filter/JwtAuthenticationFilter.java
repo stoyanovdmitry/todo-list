@@ -2,6 +2,7 @@ package com.todo.security.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todo.entity.User;
+import com.todo.repository.RefreshTokenRepository;
 import com.todo.security.jwt.JwtConstants;
 import com.todo.security.impl.UserDetailsImpl;
 import io.jsonwebtoken.Jwts;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -21,14 +23,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
+import static com.todo.security.jwt.JwtConstants.JWT_ADMIN;
+
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	private AuthenticationManager authenticationManager;
-	private UserDetailsService userDetailsService;
+	private RefreshTokenRepository tokenRepository;
 
-	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
+	public JwtAuthenticationFilter(AuthenticationManager authenticationManager,
+								   RefreshTokenRepository tokenRepository) {
 		this.authenticationManager = authenticationManager;
-		this.userDetailsService = userDetailsService;
+		this.tokenRepository = tokenRepository;
 	}
 
 	@Override
@@ -38,12 +43,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			User user = new ObjectMapper()
 					.readValue(req.getInputStream(), User.class);
 
-			UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-
 			return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-					userDetails,
-					userDetails.getPassword(),
-					userDetails.getAuthorities()));
+					user.getUsername(),
+					user.getPassword()));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -58,6 +60,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		String token = Jwts.builder()
 						   .setSubject(((UserDetailsImpl) auth.getPrincipal()).getUsername())
 						   .setExpiration(new Date(System.currentTimeMillis() + JwtConstants.JCT_EXPIRATION))
+						   .claim(JWT_ADMIN, auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")))
 						   .signWith(SignatureAlgorithm.HS512, JwtConstants.JWT_SECRET.getBytes())
 						   .compact();
 
