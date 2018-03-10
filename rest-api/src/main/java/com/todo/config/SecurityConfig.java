@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 			.antMatchers(HttpMethod.POST, "/users").permitAll()
 			.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
-			.antMatchers("/users/{username}/**").access("principal.username == #username || hasRole('ROLE_ADMIN')")
+			.antMatchers("/users/{username}/**").access("principal == #username || hasRole('ROLE_ADMIN')")
 			.anyRequest().authenticated()
 			.and()
 			.addFilter(new JwtAuthenticationFilter(authenticationManager(), tokenRepository))

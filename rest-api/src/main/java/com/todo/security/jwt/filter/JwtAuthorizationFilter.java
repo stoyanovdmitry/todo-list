@@ -1,16 +1,21 @@
 package com.todo.security.jwt.filter;
 
+import com.todo.exception.ForbiddenException;
 import com.todo.security.jwt.JwtConstants;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -18,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.todo.security.jwt.JwtConstants.JWT_ADMIN;
@@ -47,23 +53,27 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
 		String token = request.getHeader(JwtConstants.JWT_HEADER);
+
 		if (token != null) {
 			Claims body = Jwts.parser()
 							  .setSigningKey(JwtConstants.JWT_SECRET.getBytes())
 							  .parseClaimsJws(token.replace(JwtConstants.JWT_PREFIX, ""))
 							  .getBody();
 
-			if (body.getSubject() != null) {
+			String username = body.getSubject();
+
+			if (username != null) {
 				boolean admin = (boolean) body.get(JWT_ADMIN);
-
 				List<GrantedAuthority> authorityList = new ArrayList<>();
-				if (admin) authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
-				return new UsernamePasswordAuthenticationToken(body.getSubject(),
+				if (admin) {
+					authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+				}
+
+				return new UsernamePasswordAuthenticationToken(username,
 															   null,
 															   authorityList);
 			}
-			return null;
 		}
 		return null;
 	}

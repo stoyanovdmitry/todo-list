@@ -1,6 +1,7 @@
 package com.todo.security.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.todo.entity.RefreshToken;
 import com.todo.entity.User;
 import com.todo.repository.RefreshTokenRepository;
 import com.todo.security.jwt.JwtConstants;
@@ -12,8 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -57,13 +56,25 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 											FilterChain chain,
 											Authentication auth) throws IOException, ServletException {
 
-		String token = Jwts.builder()
-						   .setSubject(((UserDetailsImpl) auth.getPrincipal()).getUsername())
-						   .setExpiration(new Date(System.currentTimeMillis() + JwtConstants.JCT_EXPIRATION))
+		String username = ((UserDetailsImpl) auth.getPrincipal()).getUsername();
+
+		String accessToken = Jwts.builder()
+								 .setSubject(username)
+								 .setExpiration(new Date(System.currentTimeMillis() + JwtConstants.ACCESS_EXPIRATION))
+								 .claim(JWT_ADMIN, auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")))
+								 .signWith(SignatureAlgorithm.HS512, JwtConstants.JWT_SECRET.getBytes())
+								 .compact();
+
+		String refreshToken = Jwts.builder()
+						   .setSubject(username)
+						   .setExpiration(new Date(System.currentTimeMillis() + JwtConstants.REFRESH_EXPIRATION))
 						   .claim(JWT_ADMIN, auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")))
 						   .signWith(SignatureAlgorithm.HS512, JwtConstants.JWT_SECRET.getBytes())
 						   .compact();
 
-		res.addHeader(JwtConstants.JWT_HEADER, JwtConstants.JWT_PREFIX + token);
+		res.addHeader(JwtConstants.ACCESS_HEADER, JwtConstants.JWT_PREFIX + accessToken);
+		res.addHeader(JwtConstants.REFRESH_HEADER, JwtConstants.JWT_PREFIX + refreshToken);
+
+		tokenRepository.save(new RefreshToken(username, refreshToken));
 	}
 }
