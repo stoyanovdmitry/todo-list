@@ -4,8 +4,10 @@ import com.todo.repository.RefreshTokenRepository;
 import com.todo.security.jwt.filter.JwtAuthenticationFilter;
 import com.todo.security.jwt.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,9 +24,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
-	@Autowired
-	private RefreshTokenRepository tokenRepository;
-
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService);
@@ -37,14 +36,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.csrf().disable()
 			.authorizeRequests()
-			.antMatchers(HttpMethod.POST, "/users").permitAll()
+			.antMatchers(HttpMethod.POST, "/users", "/token/**").permitAll()
 			.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
 			.antMatchers("/users/{username}/**").access("principal == #username || hasRole('ROLE_ADMIN')")
 			.anyRequest().authenticated()
 			.and()
-			.addFilter(new JwtAuthenticationFilter(authenticationManager(), tokenRepository))
+			.addFilter(jwtAuthenticationFilter())
 			.addFilter(new JwtAuthorizationFilter(authenticationManager()))
 			// this disables session creation on Spring Security
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	}
+
+	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+		JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter();
+		authenticationFilter.setFilterProcessesUrl("/token/login");
+		return authenticationFilter;
 	}
 }
