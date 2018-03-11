@@ -17,7 +17,7 @@ public class JwtGenerator {
 				   .setSubject(((UserDetailsImpl) authentication.getPrincipal()).getUsername())
 				   .setExpiration(new Date(System.currentTimeMillis() + JwtConstants.ACCESS_EXPIRATION))
 				   .claim(JWT_ADMIN, authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")))
-				   .signWith(SignatureAlgorithm.HS512, JwtConstants.JWT_SECRET.getBytes())
+				   .signWith(SignatureAlgorithm.HS512, JwtConstants.ACCESS_SECRET.getBytes())
 				   .compact();
 	}
 
@@ -26,7 +26,7 @@ public class JwtGenerator {
 				   .setSubject(((UserDetailsImpl) authentication.getPrincipal()).getUsername())
 				   .setExpiration(new Date(System.currentTimeMillis() + JwtConstants.REFRESH_EXPIRATION))
 				   .claim(JWT_ADMIN, authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")))
-				   .signWith(SignatureAlgorithm.HS512, JwtConstants.JWT_SECRET.getBytes())
+				   .signWith(SignatureAlgorithm.HS512, JwtConstants.REFRESH_SECRET.getBytes())
 				   .compact();
 	}
 }

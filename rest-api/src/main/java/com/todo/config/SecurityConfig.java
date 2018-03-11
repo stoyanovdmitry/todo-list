@@ -1,16 +1,15 @@
 package com.todo.config;
 
-import com.todo.repository.RefreshTokenRepository;
 import com.todo.security.jwt.filter.JwtAuthenticationFilter;
 import com.todo.security.jwt.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,19 +29,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Override
-	protected void configure(HttpSecurity http) throws Exception {
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers(HttpMethod.POST, "/users", "/token/**");
+	}
 
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
 		http.cors()
 			.and()
 			.csrf().disable()
 			.authorizeRequests()
-			.antMatchers(HttpMethod.POST, "/users", "/token/**").permitAll()
 			.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
 			.antMatchers("/users/{username}/**").access("principal == #username || hasRole('ROLE_ADMIN')")
 			.anyRequest().authenticated()
 			.and()
 			.addFilter(jwtAuthenticationFilter())
-			.addFilter(new JwtAuthorizationFilter(authenticationManager()))
+			.addFilter(jwtAuthorizationFilter())
 			// this disables session creation on Spring Security
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
@@ -52,5 +54,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter();
 		authenticationFilter.setFilterProcessesUrl("/token/login");
 		return authenticationFilter;
+	}
+
+	public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {
+		return new JwtAuthorizationFilter(authenticationManager());
 	}
 }

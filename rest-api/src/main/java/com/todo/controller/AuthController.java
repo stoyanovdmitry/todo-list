@@ -43,7 +43,7 @@ public class AuthController {
 		String token = header.replace(JwtConstants.JWT_PREFIX, "");
 
 		Claims body = Jwts.parser()
-						  .setSigningKey(JwtConstants.JWT_SECRET.getBytes())
+						  .setSigningKey(JwtConstants.REFRESH_SECRET.getBytes())
 						  .parseClaimsJws(token)
 						  .getBody();
 

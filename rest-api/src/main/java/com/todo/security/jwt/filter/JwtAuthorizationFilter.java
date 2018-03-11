@@ -48,7 +48,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
 		if (token != null) {
 			Claims body = Jwts.parser()
-							  .setSigningKey(JwtConstants.JWT_SECRET.getBytes())
+							  .setSigningKey(JwtConstants.ACCESS_SECRET.getBytes())
 							  .parseClaimsJws(token.replace(JwtConstants.JWT_PREFIX, ""))
 							  .getBody();
 
