@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todo.entity.RefreshToken;
 import com.todo.entity.User;
 import com.todo.repository.RefreshTokenRepository;
+import com.todo.repository.UserRepository;
 import com.todo.security.impl.UserDetailsImpl;
 import com.todo.security.jwt.JwtConstants;
 import com.todo.security.jwt.JwtGenerator;
+import com.todo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,7 @@ import java.io.IOException;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+	private UserService userService;
 	private RefreshTokenRepository tokenRepository;
 
 	public JwtAuthenticationFilter() {
@@ -54,8 +57,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		res.addHeader(JwtConstants.REFRESH_HEADER, JwtConstants.JWT_PREFIX + refreshToken);
 
 		String username = ((UserDetailsImpl) auth.getPrincipal()).getUsername();
+		User user = userService.getUserIfPresent(username);
 
-		tokenRepository.save(new RefreshToken(username, refreshToken));
+		tokenRepository.deleteAllByUserUsername(user.getUsername());
+		tokenRepository.save(new RefreshToken(user, refreshToken));
 	}
 
 	@Override
@@ -67,5 +72,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Autowired
 	public void setTokenRepository(RefreshTokenRepository tokenRepository) {
 		this.tokenRepository = tokenRepository;
+	}
+
+	@Autowired
+	public void setUserService(UserService userService) {
+		this.userService = userService;
 	}
 }

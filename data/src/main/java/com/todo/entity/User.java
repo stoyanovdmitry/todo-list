@@ -1,5 +1,7 @@
 package com.todo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -20,7 +22,12 @@ public class User {
 	private String password;
 
 	@OneToMany(mappedBy = "user")
+	@JsonManagedReference
 	private List<Todo> todos;
+
+	@OneToMany(mappedBy = "user")
+	@JsonIgnore
+	private List<RefreshToken> refreshTokens;
 
 	public User() {
 	}
@@ -66,5 +73,13 @@ public class User {
 
 	public void setTodos(List<Todo> todos) {
 		this.todos = todos;
+	}
+
+	public List<RefreshToken> getRefreshTokens() {
+		return refreshTokens;
+	}
+
+	public void setRefreshTokens(List<RefreshToken> refreshTokens) {
+		this.refreshTokens = refreshTokens;
 	}
 }

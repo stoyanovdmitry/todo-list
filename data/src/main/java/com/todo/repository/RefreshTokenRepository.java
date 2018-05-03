@@ -3,15 +3,22 @@ package com.todo.repository;
 import com.todo.entity.RefreshToken;
 import org.springframework.data.repository.Repository;
 
+import javax.transaction.Transactional;
+
 public interface RefreshTokenRepository extends Repository<RefreshToken, Integer> {
 
+	@Transactional
 	RefreshToken save(RefreshToken refreshToken);
 
+	@Transactional
 	void deleteAll();
 
-	void deleteAllByUsername(String username);
+	@Transactional
+	void deleteAllByUserUsername(String username);
 
-	void delete(RefreshToken refreshToken);
+	@Transactional
+	void delete(int id);
 
+	@Transactional
 	RefreshToken findByToken(String token);
 }

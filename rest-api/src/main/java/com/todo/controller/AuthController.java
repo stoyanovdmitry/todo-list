@@ -2,6 +2,7 @@ package com.todo.controller;
 
 import com.todo.entity.RefreshToken;
 import com.todo.entity.User;
+import com.todo.exception.ForbiddenException;
 import com.todo.repository.RefreshTokenRepository;
 import com.todo.security.jwt.JwtConstants;
 import com.todo.security.jwt.JwtGenerator;
@@ -48,26 +49,25 @@ public class AuthController {
 						  .getBody();
 
 		RefreshToken existToken = tokenRepository.findByToken(token);
+		if (existToken == null) {
+			throw new ForbiddenException();
+		}
 
 		String username = body.getSubject();
 
-		if (!username.equals(existToken.getUsername()) || !token.equals(existToken.getToken())) {
-			tokenRepository.deleteAllByUsername(existToken.getUsername());
-		} else {
-			User user = userService.getUserIfPresent(username);
-			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-					user.getUsername(),
-					user.getPassword()
-			));
+		User user = userService.getUserIfPresent(username);
+		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+				user.getUsername(),
+				user.getPassword()
+		));
 
-			String accessToken = JwtGenerator.getAccessToken(authentication);
-			String refreshToken = JwtGenerator.getRefreshToken(authentication);
+		String accessToken = JwtGenerator.getAccessToken(authentication);
+		String refreshToken = JwtGenerator.getRefreshToken(authentication);
 
-			res.addHeader(JwtConstants.ACCESS_HEADER, JwtConstants.JWT_PREFIX + accessToken);
-			res.addHeader(JwtConstants.REFRESH_HEADER, JwtConstants.JWT_PREFIX + refreshToken);
+		res.addHeader(JwtConstants.ACCESS_HEADER, JwtConstants.JWT_PREFIX + accessToken);
+		res.addHeader(JwtConstants.REFRESH_HEADER, JwtConstants.JWT_PREFIX + refreshToken);
 
-			tokenRepository.delete(existToken);
-			tokenRepository.save(new RefreshToken(user.getUsername(), refreshToken));
-		}
+		tokenRepository.delete(existToken.getId());
+		tokenRepository.save(new RefreshToken(user, refreshToken));
 	}
 }

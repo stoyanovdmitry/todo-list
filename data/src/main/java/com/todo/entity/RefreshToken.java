@@ -1,9 +1,6 @@
 package com.todo.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class RefreshToken {
@@ -12,8 +9,8 @@ public class RefreshToken {
 	@GeneratedValue
 	private int id;
 
-	@Column(nullable = false)
-	private String username;
+	@ManyToOne
+	private User user;
 
 	@Column(nullable = false, unique = true)
 	private String token;
@@ -21,8 +18,8 @@ public class RefreshToken {
 	public RefreshToken() {
 	}
 
-	public RefreshToken(String username, String token) {
-		this.username = username;
+	public RefreshToken(User user, String token) {
+		this.user = user;
 		this.token = token;
 	}
 
@@ -34,19 +31,19 @@ public class RefreshToken {
 		this.id = id;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 	public String getToken() {
 		return token;
 	}
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 }

@@ -42,11 +42,11 @@ public class RepositoriesCustomMethodsTest {
 		todoRepository.save(new Todo("text1", user2));
 		todoRepository.save(new Todo("text2", user2));
 
-		tokenRepository.save(new RefreshToken("username", "token1"));
-		tokenRepository.save(new RefreshToken("username", "token2"));
-		tokenRepository.save(new RefreshToken("username", "token3"));
-		tokenRepository.save(new RefreshToken("username1", "token4"));
-		tokenRepository.save(new RefreshToken("username1", "token5"));
+		tokenRepository.save(new RefreshToken(user1, "token1"));
+		tokenRepository.save(new RefreshToken(user1, "token2"));
+		tokenRepository.save(new RefreshToken(user1, "token3"));
+		tokenRepository.save(new RefreshToken(user2, "token4"));
+		tokenRepository.save(new RefreshToken(user2, "token5"));
 	}
 
 	@Test
@@ -64,9 +64,9 @@ public class RepositoriesCustomMethodsTest {
 	@Test
 	public void findByTokenThanDelete() {
 		RefreshToken refreshToken = tokenRepository.findByToken("token2");
-		Assert.assertEquals("username", refreshToken.getUsername());
+		Assert.assertEquals("user1", refreshToken.getUser().getUsername());
 
-		tokenRepository.delete(refreshToken);
+		tokenRepository.delete(refreshToken.getId());
 
 		refreshToken = tokenRepository.findByToken("token2");
 		Assert.assertNull(refreshToken);
@@ -77,7 +77,7 @@ public class RepositoriesCustomMethodsTest {
 		RefreshToken refreshToken = tokenRepository.findByToken("token1");
 		Assert.assertNotNull(refreshToken);
 
-		tokenRepository.deleteAllByUsername(refreshToken.getUsername());
+		tokenRepository.deleteAllByUserUsername(refreshToken.getUser().getUsername());
 
 		refreshToken = tokenRepository.findByToken("token1");
 		Assert.assertNull(refreshToken);
