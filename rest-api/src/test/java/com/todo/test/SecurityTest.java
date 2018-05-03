@@ -20,6 +20,7 @@ import java.util.Collections;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -62,11 +63,11 @@ public class SecurityTest {
 	@Test
 	public void getToken_correctCredentials_thenIsOk() throws Exception {
 
-		User user = new User("user", "password");
-		String jsonUser = objectMapper.writeValueAsString(user);
+		//need to use next line because of User password field is annotated by JsonProperty(write-only) and I did'nt found better solution
+		String jsonUser = "{\"username\":\"user\",\"password\":\"password\"}";
 
-		mvc.perform(get("/token/login").accept(MediaType.APPLICATION_JSON_UTF8)
-									   .content(jsonUser))
+		mvc.perform(post("/token/login").accept(MediaType.APPLICATION_JSON_UTF8)
+										.content(jsonUser))
 		   .andExpect(status().isOk());
 	}
 
