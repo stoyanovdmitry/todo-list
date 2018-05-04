@@ -2,6 +2,7 @@ package com.todo.security.jwt.filter;
 
 import com.todo.security.jwt.JwtConstants;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,9 +38,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 			return;
 		}
 
-		UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+		try {
+			UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+		} catch (JwtException e) {
+			res.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+		}
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
 		chain.doFilter(req, res);
 	}
 
