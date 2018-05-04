@@ -22,7 +22,7 @@ public class UserService {
 		Optional<User> optionalUser = userRepository.findByUsername(username);
 
 		if (!optionalUser.isPresent())
-			throw new NotFoundException();
+			throw new NotFoundException("User with current username is not found");
 
 		return optionalUser.get();
 	}
