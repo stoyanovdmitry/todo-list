@@ -1,11 +1,9 @@
 package com.todo.controller;
 
 import com.todo.entity.User;
-import com.todo.exception.ConflictException;
 import com.todo.repository.UserRepository;
 import com.todo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,10 +28,6 @@ public class UserController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public void registerUser(@RequestBody User user) {
-		try {
-			userRepository.save(user);
-		} catch (DataIntegrityViolationException e) {
-			throw new ConflictException();
-		}
+		userRepository.save(user);
 	}
 }
