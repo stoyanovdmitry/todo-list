@@ -2,13 +2,13 @@ package com.todo.controller;
 
 import com.todo.entity.RefreshToken;
 import com.todo.entity.User;
-import com.todo.exception.ForbiddenException;
 import com.todo.repository.RefreshTokenRepository;
 import com.todo.security.jwt.JwtConstants;
 import com.todo.security.jwt.JwtGenerator;
 import com.todo.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -50,7 +50,7 @@ public class AuthController {
 
 		RefreshToken existToken = tokenRepository.findByToken(token);
 		if (existToken == null) {
-			throw new ForbiddenException();
+			throw new UnsupportedJwtException("Wrong refresh token. You need to login again");
 		}
 
 		String username = body.getSubject();
