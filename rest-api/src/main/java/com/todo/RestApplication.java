@@ -19,15 +19,4 @@ public class RestApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RestApplication.class, args);
 	}
-
-	@Bean
-	CommandLineRunner init(UserRepository userRepository, TodoRepository todoRepository) {
-		return (cmd) -> Arrays.asList(
-				"user,admin".split(","))
-							  .forEach(name -> {
-							  	User user = userRepository.save(new User(name, "password"));
-							  	todoRepository.save(new Todo("todo1", user));
-							  	todoRepository.save(new Todo("todo2", user));
-							  });
-	}
 }
