@@ -11,6 +11,7 @@
 	<modules>
 		<module>data</module>
 		<module>rest-api</module>
+		<module>frontend</module>
 	</modules>
 
 	<properties>
