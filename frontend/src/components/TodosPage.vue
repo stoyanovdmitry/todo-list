@@ -4,7 +4,9 @@
 			<div class="text col-md-5 d-flex align-items-start
 			border border-success border-top-0 border-left-0 border-right-0
 			p-2 mt-2 pb-3">
-				<button @click="addTodo(todoText)" class="mr-2 btn btn-success rounded-circle">+</button>
+				<button @click="addTodo(todoText)" class="mr-3 mt-2
+				 d-flex justify-content-center align-items-center
+				 btn-addnote"><span class="btn-addnote-symbol">+</span></button>
 				<textarea @keydown.enter="addTodo(todoText, $event)" v-autosize="todoText"
 						  class="new-todo-input border-0 mt-1" v-model="todoText" placeholder="Todo...">
 				</textarea>
@@ -14,13 +16,17 @@
 			 v-for="todo in todoDescOrder()"
 			 v-if="!todo.completed">
 			<div class="text col-md-5 d-flex align-items-start
-			border border-success border-top-0 border-left-0 border-right-0
+			border border-primary border-top-0 border-left-0 border-right-0
 			p-2 mt-2 pb-3">
-				<input @change="updateTodo(todo)" class="mr-2" type="checkbox" v-model="todo.completed">
+				<!--<input @change="updateTodo(todo)" class="mr-2" type="checkbox" v-model="todo.completed">-->
+				<div class="custom-control custom-checkbox">
+					<input @change="updateTodo(todo)" class="custom-control-input" type="checkbox" v-model="todo.completed" v-bind:id="todo.id">
+					<label class="custom-control-label" v-bind:for="todo.id"></label>
+				</div>
 				<textarea @keydown.enter="disableKey"
 						  @keyup="updateTodo(todo)"
 						  v-autosize="todoText"
-						  class="new-todo-input border-0" v-model="todo.text" placeholder="Todo...">
+						  class="new-todo-input border-0 ml-3" v-model="todo.text" placeholder="Todo...">
 				</textarea>
 			</div>
 		</div>
@@ -28,13 +34,17 @@
 			 v-for="todo in todoDescOrder()"
 			 v-if="todo.completed">
 			<div class="ttext col-md-5 d-flex align-items-start
-			border border-success border-top-0 border-left-0 border-right-0
+			border border-muted border-top-0 border-left-0 border-right-0
 			p-2 mt-2 pb-3">
-				<input @change="updateTodo(todo)" class="mr-2" type="checkbox" v-model="todo.completed">
+				<!--<input @change="updateTodo(todo)" class="mr-2" type="checkbox" v-model="todo.completed">-->
+				<div class="custom-control custom-checkbox">
+					<input @change="updateTodo(todo)" class="custom-control-input" type="checkbox" v-model="todo.completed" v-bind:id="todo.id">
+					<label class="custom-control-label" v-bind:for="todo.id"></label>
+				</div>
 				<textarea @keydown.enter="disableKey"
 						  @keyup="updateTodo(todo)"
 						  v-autosize="todoText"
-						  class="new-todo-input border-0" v-model="todo.text" placeholder="Todo...">
+						  class="new-todo-input border-0 ml-3" v-model="todo.text" placeholder="Todo...">
 				</textarea>
 			</div>
 		</div>
@@ -150,5 +160,45 @@
 		resize: none;
 		height: 34px;
 		width: 100%;
+	}
+	
+	.btn-addnote {
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 50%;
+		border: 0px;
+		background: #5cb85c;
+	}
+	.btn-addnote:hover {
+		opacity: .9;
+	}
+	.btn-addnote-symbol {
+		font-size: 1.45em;
+		position: relative;
+		top: -.55rem;
+		color: white;
+	}
+	.custom-checkbox .custom-control-input:checked~.custom-control-label::before {
+		background: #dee2e6;
+	}
+	
+	.custom-control-label::after {
+		top: .5rem;
+		left: .25rem;
+		background-size: 80% 80%;
+	}
+	.custom-checkbox .custom-control-label::before {
+		border-radius: 1rem;
+		/*top: .5rem;*/
+		width: 1.5rem;
+		height: 1.5rem;
+	}
+	.custom-checkbox .custom-control-label:hover::before {
+		border: 2px solid #007bff;
+		opacity: .9;
+	}
+	.custom-control-label::before {
+		background: none;
+		border: 2px solid #dee2e6;
 	}
 </style>
