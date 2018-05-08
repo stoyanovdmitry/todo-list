@@ -1,11 +1,13 @@
 <template>
 	<div id="app" class="p-3">
 		<div class="row d-flex justify-content-center">
-			<div class="text col-md-5
+			<div class="text col-md-5 d-flex align-items-start
 			border border-success border-top-0 border-left-0 border-right-0
 			p-2 mt-2 pb-3">
 				<button v-on:click="addTodo(todoText)" class="mr-2 btn btn-success rounded-circle">+</button>
-				<input v-on:keyup.enter="addTodo(todoText)"  type="text" class="new-todo-input border-0" v-model="todoText" placeholder="Todo...">
+				<textarea v-autosize="todoText" v-on:keyup.enter="addTodo(todoText)"
+						  class="new-todo-input border-0 mt-1" v-model="todoText" placeholder="Todo...">
+				</textarea>
 			</div>
 		</div>
 		<div class="row d-flex justify-content-center" v-for="todo in todoDescOrder()" v-if="!todo.completed">
@@ -88,5 +90,8 @@
 <style>
 	.new-todo-input {
 		outline: 0;
+		resize: none;
+		height: 34px;
+		width: 100%;
 	}
 </style>

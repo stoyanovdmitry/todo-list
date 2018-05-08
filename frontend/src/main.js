@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import VueAutosize from 'vue-autosize'
 
 Vue.use(VueRouter);
+Vue.use(VueAutosize);
 
 // const mainPage = require('./components/NotFound').default;
 const mainPage = require('./components/TodosPage').default;
