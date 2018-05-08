@@ -10,12 +10,12 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 	<body>
 		<div id="app">
-			<header class="bg-warning">
-				<div class="container p-3">
-					<router-link to="/" class="logo text-dark">
+			<header class="bg-dark">
+				<nav class="container p-3 navbar navbar-expand-md navbar-dark">
+					<router-link to="/" class="navbar-brand">
 						<span v-if="user">{{ user.username }}</span>
 					</router-link>
-				</div>
+				</nav>
 			</header>
 			<router-view class="container"></router-view>
 		</div>

@@ -27,12 +27,12 @@ public class TodoController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public void addTodo(@PathVariable String username,
+	public Todo addTodo(@PathVariable String username,
 						@RequestBody Todo todo) {
 		User user = userService.getUserIfPresent(username);
 
 		todo.setUser(user);
-		todoRepository.save(todo);
+		return todoRepository.save(todo);
 	}
 
 	@RequestMapping(value = "/{id}",

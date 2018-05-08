@@ -25,8 +25,7 @@ new Vue({
 	},
 	beforeMount() {
 		this.user = {
-			username: 'user',
-			password: 'password'
+			username: 'user'
 		}
 	}
 });
