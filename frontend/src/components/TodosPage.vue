@@ -10,24 +10,28 @@
 				</textarea>
 			</div>
 		</div>
-		<div class="row d-flex justify-content-center" v-for="todo in todoDescOrder()" v-if="!todo.completed">
+		<div class="row d-flex justify-content-center"
+			 v-for="todo in todoDescOrder()"
+			 v-if="!todo.completed">
 			<div class="text col-md-5 d-flex align-items-start
 			border border-success border-top-0 border-left-0 border-right-0
 			p-2 mt-2 pb-3">
 				<input @change="updateTodo(todo)" class="mr-2" type="checkbox" v-model="todo.completed">
-				<textarea @keydown.enter="disableEnter"
+				<textarea @keydown.enter="disableKey"
 						  @keyup="updateTodo(todo)"
 						  v-autosize="todoText"
 						  class="new-todo-input border-0" v-model="todo.text" placeholder="Todo...">
 				</textarea>
 			</div>
 		</div>
-		<div class="row d-flex justify-content-center" v-for="todo in todoDescOrder()" v-if="todo.completed">
+		<div class="row d-flex justify-content-center"
+			 v-for="todo in todoDescOrder()"
+			 v-if="todo.completed">
 			<div class="ttext col-md-5 d-flex align-items-start
 			border border-success border-top-0 border-left-0 border-right-0
 			p-2 mt-2 pb-3">
 				<input @change="updateTodo(todo)" class="mr-2" type="checkbox" v-model="todo.completed">
-				<textarea @keydown.enter="disableEnter"
+				<textarea @keydown.enter="disableKey"
 						  @keyup="updateTodo(todo)"
 						  v-autosize="todoText"
 						  class="new-todo-input border-0" v-model="todo.text" placeholder="Todo...">
@@ -71,7 +75,7 @@
 				}).catch(err => console.log(err.message))
 			},
 			addTodo: function (text, e) {
-				if(e !== undefined) this.disableEnter(e);
+				if (e !== undefined) this.disableKey(e);
 				const app = this;
 				const requestUrl = this.$parent.serverUrl + "/users/"
 					+ this.$parent.user.username + '/todos';
@@ -81,16 +85,23 @@
 					body: JSON.stringify({text: text}),
 					headers: headers
 				}).then(res => {
-					res.json().then(body => {
-						app.todoText = null;
-						app.todos.push(body);
-						console.log(body);
-						console.log('successful addTodo')
-					});
+					if (res.status === 200) {
+						res.json().then(body => {
+							app.todoText = null;
+							app.todos.push(body);
+							console.log(body);
+							console.log('successful addTodo')
+						});
+					}
 				}).catch(err => console.log(err.message))
 			},
 			updateTodo: function (todo, e) {
-				if(e !== undefined) this.disableEnter(e);
+				if (e !== undefined) this.disableKey(e);
+				if (todo.text === '') {
+					this.deleteTodo(todo);
+					return;
+				}
+				
 				const app = this;
 				const requestUrl = this.$parent.serverUrl + "/users/"
 					+ this.$parent.user.username + '/todos/' + todo.id;
@@ -99,14 +110,32 @@
 					method: 'PUT',
 					body: JSON.stringify(todo),
 					headers: headers
-				}).then(res => console.log('Todo successful updated'))
-					.catch(err => console.log(err.message))
+				}).then(res => {
+					if (res.status === 200) {
+						console.log('Todo successfully updated')
+					}
+				}).catch(err => console.log(err.message))
 			},
-			disableEnter: function (e) {
+			deleteTodo: function (todo) {
+				const app = this;
+				const requestUrl = this.$parent.serverUrl + "/users/"
+					+ this.$parent.user.username + '/todos/' + todo.id;
+				
+				fetch(requestUrl, {
+					method: 'DELETE',
+					headers: headers
+				}).then(res => {
+					if (res.status === 200) {
+						let indexOfTodo = app.todos.indexOf(todo);
+						app.todos.splice(indexOfTodo, 1);
+						console.log('Todo successfully deleted');
+					}
+				}).catch(err => console.log(err.message))
+			},
+			disableKey: function (e) {
 				e.stopPropagation();
 				e.preventDefault();
 				e.returnValue = false;
-				this.input = e.target.value;
 			}
 		},
 		beforeMount() {
