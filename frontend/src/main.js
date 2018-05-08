@@ -8,7 +8,7 @@ const mainPage = require('./components/TodosPage').default;
 
 const router = new VueRouter({
 	routes: [
-		{path: '/main', component: mainPage}
+		{path: '/', component: mainPage}
 	]
 });
 
@@ -22,5 +22,11 @@ new Vue({
 	},
 	router: router,
 	methods: {
+	},
+	beforeMount() {
+		this.user = {
+			username: 'user',
+			password: 'password'
+		}
 	}
 });

@@ -2,15 +2,29 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>frontend</title>
-	</head>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 	<body>
 		<div id="app">
-			<header>
-				<span v-if="user" class="logo">{{ user.username }}</span>
+			<header class="bg-warning">
+				<div class="container p-3">
+					<router-link to="/" class="logo text-dark">
+						<span v-if="user">{{ user.username }}</span>
+					</router-link>
+				</div>
 			</header>
-			<router-view></router-view>
+			<router-view class="container"></router-view>
 		</div>
 		<script src="/dist/build.js"></script>
 	</body>
+	
+	<style>
+		.logo:hover {
+			text-decoration: none;
+		}
+	</style>
 </html>
