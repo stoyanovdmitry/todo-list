@@ -54,9 +54,7 @@
 </template>
 
 <script>
-	const headers = new Headers();
-	headers.append('Content-Type', 'application/json');
-	headers.append('Accept', 'application/json');
+	const headers = headers;
 	
 	export default {
 		name: 'TodosPage',
