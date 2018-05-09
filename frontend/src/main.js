@@ -38,21 +38,51 @@ const Auth = {
 	refreshToken: null,
 	tryToLogin: function () {
 		if (!this.isAuthenticated) {
+			this.isAuthenticated = true;
 			this.username = this.getCookie('username');
 			this.accessToken = this.getCookie('accessToken');
 			this.refreshToken = this.getCookie('refreshToken');
+			
+			console.log(this.username);
+			
+			if (this.username === undefined || this.accessToken === undefined || this.refreshToken === undefined) {
+				this.logout();
+			} else {
+				this.tryToRefresh();
+			}
 		}
 		
-		if (this.username === undefined || this.accessToken === undefined || this.refreshToken === undefined) {
-			this.logout();
-		}
-		
-		
-		//todo check is access token working. if not - try to refresh, than if refresh is bad - clear cookies
 		return this.isAuthenticated;
 	},
 	tryToRefresh: function () {
-		return true;
+		const refreshUrl = serverUrl + '/token/refresh';
+		headers.append('Authorization', this.refreshToken);
+		
+		fetch(refreshUrl, {
+			method: 'POST',
+			headers: headers
+		}).then(res => {
+			if (res.ok) {
+				let accessToken = res.headers.get('access-token');
+				let refreshToken = res.headers.get('refresh-token');
+				
+				this.accessToken = accessToken;
+				this.refreshToken = refreshToken;
+				this.fillCookie();
+				
+				app.username = this.username;
+				app.callLoadTodos();
+				
+				console.log('refreshed')
+			} else {
+				this.logout();
+				console.log('didnt refreshed')
+			}
+		}).catch(err => {
+			console.log(err.message);
+			console.log('err');
+			// this.logout();
+		})
 	},
 	logout: function () {
 		this.isAuthenticated = false;
@@ -82,33 +112,28 @@ const Auth = {
 	}
 };
 
-router.beforeEach((to, from, next) => {
-	if (to.matched.some(record => record.meta.requiresAuth) && !Auth.isAuthenticated) {
-		if (!Auth.tryToLogin()) {
-			next({path: '/login'});
-		}
-	} else {
-		next();
-	}
-});
+// router.beforeEach((to, from, next) => {
+// 	if (to.matched.some(record => record.meta.requiresAuth) && !Auth.isAuthenticated) {
+// 		if (!Auth.tryToLogin()) {
+// 			next({path: '/login'});
+// 		}
+// 	} else {
+// 		next();
+// 	}
+// });
 
 const serverUrl = 'http://localhost:8080';
 
-new Vue({
+const app = new Vue({
 	el: '#app',
 	data: {
-		user: null,
+		username: 'user',
 		serverUrl: serverUrl
 	},
 	router: router,
-	methods: {
-		loggin: function () {
-		
-		}
-	},
-	beforeMount() {
-		this.user = {
-			username: 'user'
+	method: {
+		callLoadTodos: function () {
+			this.loadTodos();
 		}
 	}
 });

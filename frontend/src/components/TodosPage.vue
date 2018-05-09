@@ -54,7 +54,7 @@
 </template>
 
 <script>
-	const headers = headers;
+	import {headers} from '../main';
 	
 	export default {
 		name: 'TodosPage',
@@ -72,9 +72,11 @@
 				return this.todos.slice().reverse();
 			},
 			loadTodos: function () {
+				console.log(this.$parent.username + ' loadTodos');
+				
 				const app = this;
 				const requestUrl = this.$parent.serverUrl + "/users/"
-					+ this.$parent.user.username + '/todos';
+					+ this.$parent.username + '/todos';
 				
 				fetch(requestUrl, {
 					method: 'GET',
@@ -91,7 +93,7 @@
 				if (e !== undefined) this.disableKey(e);
 				const app = this;
 				const requestUrl = this.$parent.serverUrl + "/users/"
-					+ this.$parent.user.username + '/todos';
+					+ this.$parent.username + '/todos';
 				
 				fetch(requestUrl, {
 					method: 'POST',
@@ -117,7 +119,7 @@
 				
 				const app = this;
 				const requestUrl = this.$parent.serverUrl + "/users/"
-					+ this.$parent.user.username + '/todos/' + todo.id;
+					+ this.$parent.username + '/todos/' + todo.id;
 				
 				fetch(requestUrl, {
 					method: 'PUT',
@@ -132,7 +134,7 @@
 			deleteTodo: function (todo) {
 				const app = this;
 				const requestUrl = this.$parent.serverUrl + "/users/"
-					+ this.$parent.user.username + '/todos/' + todo.id;
+					+ this.$parent.username + '/todos/' + todo.id;
 				
 				fetch(requestUrl, {
 					method: 'DELETE',
@@ -151,7 +153,7 @@
 				e.returnValue = false;
 			}
 		},
-		beforeMount() {
+		created() {
 			this.loadTodos();
 		}
 	}
