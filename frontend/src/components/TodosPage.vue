@@ -20,7 +20,8 @@
 			p-2 mt-2 pb-3">
 				<!--<input @change="updateTodo(todo)" class="mr-2" type="checkbox" v-model="todo.completed">-->
 				<div class="custom-control custom-checkbox">
-					<input @change="updateTodo(todo)" class="custom-control-input" type="checkbox" v-model="todo.completed" v-bind:id="todo.id">
+					<input @change="updateTodo(todo)" class="custom-control-input" type="checkbox"
+						   v-model="todo.completed" v-bind:id="todo.id">
 					<label class="custom-control-label" v-bind:for="todo.id"></label>
 				</div>
 				<textarea @keydown.enter="disableKey"
@@ -38,7 +39,8 @@
 			p-2 mt-2 pb-3">
 				<!--<input @change="updateTodo(todo)" class="mr-2" type="checkbox" v-model="todo.completed">-->
 				<div class="custom-control custom-checkbox">
-					<input @change="updateTodo(todo)" class="custom-control-input" type="checkbox" v-model="todo.completed" v-bind:id="todo.id">
+					<input @change="updateTodo(todo)" class="custom-control-input" type="checkbox"
+						   v-model="todo.completed" v-bind:id="todo.id">
 					<label class="custom-control-label" v-bind:for="todo.id"></label>
 				</div>
 				<textarea @keydown.enter="disableKey"
@@ -57,7 +59,7 @@
 	headers.append('Accept', 'application/json');
 	
 	export default {
-		name: 'app',
+		name: 'TodosPage',
 		data() {
 			return {
 				todos: this.$parent.todos,
@@ -66,6 +68,9 @@
 		},
 		methods: {
 			todoDescOrder: function () {
+				if (this.todos === undefined) {
+					return;
+				}
 				return this.todos.slice().reverse();
 			},
 			loadTodos: function () {
@@ -161,13 +166,13 @@
 		height: 34px;
 		width: 100%;
 	}
-	
 	.btn-addnote {
 		width: 1.5rem;
 		height: 1.5rem;
 		border-radius: 50%;
 		border: 0px;
 		background: #5cb85c;
+		outline: none !important;
 	}
 	.btn-addnote:hover {
 		opacity: .9;
@@ -178,10 +183,9 @@
 		top: -.55rem;
 		color: white;
 	}
-	.custom-checkbox .custom-control-input:checked~.custom-control-label::before {
+	.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
 		background: #dee2e6;
 	}
-	
 	.custom-control-label::after {
 		top: .5rem;
 		left: .25rem;
