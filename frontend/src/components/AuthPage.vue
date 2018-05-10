@@ -1,6 +1,6 @@
 <template>
-	<div class="app">
-		<div class="row">
+	<div class="">
+		<div class="row auth d-flex justify-content-center align-items-center">
 			<div class="col-sm-5 ml-auto mr-auto border auth-block">
 				<form class="p-3" @submit.prevent="login">
 					<div class="form-group">
@@ -113,5 +113,7 @@
 </script>
 
 <style scoped>
-
+	.auth {
+		min-height: 80vh;
+	}
 </style>
