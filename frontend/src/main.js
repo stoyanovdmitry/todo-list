@@ -59,12 +59,16 @@ const app = new Vue({
 	computed: {
 		username() {
 			return store.getters.getUsername;
+		},
+		isAuthenticated() {
+			return store.getters.isAuthenticated;
 		}
 	},
 	router: router,
-	method: {
+	methods: {
 		logout: function () {
 			store.dispatch('logout');
+			router.push('/login');
 		}
 	}
 });

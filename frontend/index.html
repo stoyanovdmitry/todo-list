@@ -14,9 +14,12 @@
 			<header class="bg-dark">
 				<nav class="container p-3 navbar navbar-expand-md navbar-dark">
 					<router-link to="/" class="navbar-brand">
-						<span v-if="username !== null">{{ username }}</span>
+						<span v-if="isAuthenticated">{{ username }}</span>
 						<span v-else>Todos</span>
 					</router-link>
+					<form v-if="isAuthenticated" class="form-inline ml-auto" @submit.prevent="logout">
+						<button class="btn btn-danger" type="submit">Logout</button>
+					</form>
 				</nav>
 			</header>
 			<router-view class="container"></router-view>
