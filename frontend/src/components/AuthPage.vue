@@ -70,6 +70,7 @@
 						this.$store.commit('setAccessToken', accessToken);
 						this.$store.commit('setRefreshToken', refreshToken);
 						this.$store.commit('setAuthenticated', true);
+						this.$store.dispatch('fillCookies');
 						
 						console.log(this.$store.getters.getUsername);
 						

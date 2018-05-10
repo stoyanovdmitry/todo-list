@@ -36,21 +36,12 @@ const store = new Vuex.Store({
 		},
 		setUsername(state, username) {
 			state.auth.username = username;
-			
-			let twoWeeks = new Date(new Date().getTime() + 1209600 * 1000);
-			document.cookie = 'username=' + username + '; path=/; expires=' + twoWeeks.toUTCString();
 		},
 		setAccessToken(state, accessToken) {
 			state.auth.accessToken = accessToken;
-			
-			let twoWeeks = new Date(new Date().getTime() + 1209600 * 1000);
-			document.cookie = 'accessToken=' + accessToken + '; path=/; expires=' + twoWeeks.toUTCString();
 		},
 		setRefreshToken(state, refreshToken) {
 			state.auth.refreshToken = refreshToken;
-			
-			let twoWeeks = new Date(new Date().getTime() + 1209600 * 1000);
-			document.cookie = 'refreshToken=' + refreshToken + '; path=/; expires=' + twoWeeks.toUTCString();
 		},
 	},
 	actions: {
@@ -60,6 +51,8 @@ const store = new Vuex.Store({
 			let username = getCookie('username');
 			let accessToken = getCookie('accessToken');
 			let refreshToken = getCookie('refreshToken');
+			
+			console.log(username)
 			
 			if (username === undefined || accessToken === undefined || refreshToken === undefined) {
 				dispatch('logout');
@@ -93,6 +86,8 @@ const store = new Vuex.Store({
 						commit('setAccessToken', accessToken);
 						commit('setRefreshToken', refreshToken);
 						
+						dispatch('fillCookies');
+						
 						router.push('/');
 						console.log('successLoading');
 					} else {
@@ -113,9 +108,15 @@ const store = new Vuex.Store({
 			document.cookie = 'refreshToken=;' + 'expires=' + date.toUTCString();
 			
 			commit('setAuthenticated', false);
-			commit('setUsername', null);
-			commit('setAccessToken', null);
-			commit('setRefreshToken', null);
+			commit('setUsername', undefined);
+			commit('setAccessToken', undefined);
+			commit('setRefreshToken', undefined);
+		},
+		fillCookies() {
+			let twoWeeks = new Date(new Date().getTime() + 1209600 * 1000);
+			document.cookie = 'username=' + store.getters.getUsername + '; path=/; expires=' + twoWeeks.toUTCString();
+			document.cookie = 'accessToken=' + store.getters.getAccessToken + '; path=/; expires=' + twoWeeks.toUTCString();
+			document.cookie = 'refreshToken=' + store.getters.getRefreshToken + '; path=/; expires=' + twoWeeks.toUTCString();
 		}
 	}
 });
