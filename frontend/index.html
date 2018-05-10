@@ -14,8 +14,8 @@
 			<header class="bg-dark">
 				<nav class="container p-3 navbar navbar-expand-md navbar-dark">
 					<router-link to="/" class="navbar-brand">
-						<span v-if="username">{{ username }}</span>
-						<span v-if="!username">Todos</span>
+						<span v-if="username !== null">{{ username }}</span>
+						<span v-else>Todos</span>
 					</router-link>
 				</nav>
 			</header>

@@ -35,7 +35,6 @@
 
 <script>
 	import {headers} from '../main';
-	import {Auth} from '../main';
 	
 	export default {
 		name: "AuthPage",
@@ -44,6 +43,11 @@
 				username: null,
 				password: null,
 				wrongAuth: false
+			}
+		},
+		computed: {
+			authUsername() {
+				return this.$store.getters.getUsername();
 			}
 		},
 		methods: {
@@ -62,14 +66,18 @@
 						let accessToken = res.headers.get('access-token');
 						let refreshToken = res.headers.get('refresh-token');
 						
-						Auth.username = this.username;
-						Auth.accessToken = accessToken;
-						Auth.refreshToken = refreshToken;
-						Auth.fillCookie();
+						this.$store.commit('setUsername', this.username);
+						this.$store.commit('setAccessToken', accessToken);
+						this.$store.commit('setRefreshToken', refreshToken);
+						this.$store.commit('setAuthenticated', true);
+						
+						console.log(this.$store.getters.getUsername);
 						
 						this.username = null;
 						this.password = null;
 						this.wrongAuth = false;
+						
+						this.$router.push('/');
 					} else {
 						this.wrongAuth = true;
 					}

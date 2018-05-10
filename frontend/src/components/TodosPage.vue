@@ -72,8 +72,6 @@
 				return this.todos.slice().reverse();
 			},
 			loadTodos: function () {
-				console.log(this.$parent.username + ' loadTodos');
-				
 				const app = this;
 				const requestUrl = this.$parent.serverUrl + "/users/"
 					+ this.$parent.username + '/todos';

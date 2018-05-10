@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueAutosize from 'vue-autosize'
+import store from './store/store'
 
 export {
 	headers,
-	Auth
+	serverUrl,
+	router
 }
 
 Vue.use(VueRouter);
@@ -30,110 +32,39 @@ const router = new VueRouter({
 	]
 });
 
+let firstAuth = true;
 
-const Auth = {
-	isAuthenticated: false,
-	username: null,
-	accessToken: null,
-	refreshToken: null,
-	tryToLogin: function () {
-		if (!this.isAuthenticated) {
-			this.isAuthenticated = true;
-			this.username = this.getCookie('username');
-			this.accessToken = this.getCookie('accessToken');
-			this.refreshToken = this.getCookie('refreshToken');
-			
-			console.log(this.username);
-			
-			if (this.username === undefined || this.accessToken === undefined || this.refreshToken === undefined) {
-				this.logout();
-			} else {
-				this.tryToRefresh();
-			}
-		}
-		
-		return this.isAuthenticated;
-	},
-	tryToRefresh: function () {
-		const refreshUrl = serverUrl + '/token/refresh';
-		headers.append('Authorization', this.refreshToken);
-		
-		fetch(refreshUrl, {
-			method: 'POST',
-			headers: headers
-		}).then(res => {
-			if (res.ok) {
-				let accessToken = res.headers.get('access-token');
-				let refreshToken = res.headers.get('refresh-token');
-				
-				this.accessToken = accessToken;
-				this.refreshToken = refreshToken;
-				this.fillCookie();
-				
-				app.username = this.username;
-				app.callLoadTodos();
-				
-				console.log('refreshed')
-			} else {
-				this.logout();
-				console.log('didnt refreshed')
-			}
-		}).catch(err => {
-			console.log(err.message);
-			console.log('err');
-			// this.logout();
-		})
-	},
-	logout: function () {
-		this.isAuthenticated = false;
-		this.username = null;
-		this.accessToken = null;
-		this.refreshToken = null;
-		
-		this.clearCookie();
-	},
-	getCookie: function (value) {
-		let matches = document.cookie.match(new RegExp(
-			"(?:^|; )" + value.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-		));
-		return matches ? decodeURIComponent(matches[1]) : undefined;
-	},
-	fillCookie: function () {
-		let twoWeeks = new Date(new Date().getTime() + 1209600 * 1000);
-		document.cookie = 'username=' + this.username + '; path=/; expires=' + twoWeeks.toUTCString();
-		document.cookie = 'accessToken=' + this.accessToken + '; path=/; expires=' + twoWeeks.toUTCString();
-		document.cookie = 'refreshToken=' + this.refreshToken + '; path=/; expires=' + twoWeeks.toUTCString();
-	},
-	clearCookie: function () {
-		let date = new Date(new Date().getTime() - 1);
-		document.cookie = 'username=;' + 'expires=' + date.toUTCString();
-		document.cookie = 'accessToken=;' + 'expires=' + date.toUTCString();
-		document.cookie = 'refreshToken=;' + 'expires=' + date.toUTCString();
+router.beforeEach((to, from, next) => {
+	if(firstAuth) {
+		store.dispatch('loadAuth');
+		firstAuth = false;
+		console.log(store.getters.isAuthenticated);
 	}
-};
-
-// router.beforeEach((to, from, next) => {
-// 	if (to.matched.some(record => record.meta.requiresAuth) && !Auth.isAuthenticated) {
-// 		if (!Auth.tryToLogin()) {
-// 			next({path: '/login'});
-// 		}
-// 	} else {
-// 		next();
-// 	}
-// });
+	if (to.matched.some(record => record.meta.requiresAuth) && !store.getters.isAuthenticated) {
+		console.log(store.getters.isAuthenticated);
+		next({path: '/login'});
+	} else {
+		next();
+	}
+});
 
 const serverUrl = 'http://localhost:8080';
 
 const app = new Vue({
 	el: '#app',
+	store,
 	data: {
-		username: 'user',
 		serverUrl: serverUrl
+	},
+	computed: {
+		username() {
+			return store.getters.getUsername;
+		}
 	},
 	router: router,
 	method: {
-		callLoadTodos: function () {
-			this.loadTodos();
+		logout: function () {
+			store.dispatch('logout');
 		}
 	}
 });
