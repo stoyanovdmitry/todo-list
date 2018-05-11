@@ -52,8 +52,6 @@ const store = new Vuex.Store({
 			let accessToken = getCookie('accessToken');
 			let refreshToken = getCookie('refreshToken');
 			
-			console.log(username)
-			
 			if (username === undefined || accessToken === undefined || refreshToken === undefined) {
 				dispatch('logout');
 			} else {
@@ -69,25 +67,24 @@ const store = new Vuex.Store({
 			
 			function tryToRefresh() {
 				let refreshUrl = serverUrl + '/token/refresh';
-				headers.append('Authorization', refreshToken);
-				
-				console.log(refreshUrl);
+				headers.set('Authorization', refreshToken);
 				
 				fetch(refreshUrl, {
 					method: 'POST',
 					headers: headers
 				}).then(res => {
 					if (res.ok) {
-						accessToken = res.headers.get('access-token');
+						accessToken = res.headers.get('access-Token');
 						refreshToken = res.headers.get('refresh-token');
 						
-						commit('setAuthenticated', true);
 						commit('setUsername', username);
 						commit('setAccessToken', accessToken);
 						commit('setRefreshToken', refreshToken);
+						commit('setAuthenticated', true);
 						
 						dispatch('fillCookies');
 						
+						headers.set('Authorization', accessToken);
 						router.push('/');
 						console.log('successLoading');
 					} else {
@@ -111,6 +108,8 @@ const store = new Vuex.Store({
 			commit('setUsername', undefined);
 			commit('setAccessToken', undefined);
 			commit('setRefreshToken', undefined);
+			
+			router.push('/login');
 		},
 		fillCookies() {
 			let twoWeeks = new Date(new Date().getTime() + 1209600 * 1000);

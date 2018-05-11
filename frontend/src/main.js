@@ -35,14 +35,9 @@ const router = new VueRouter({
 let firstAuth = true;
 
 router.beforeEach((to, from, next) => {
-	if(firstAuth) {
+	if (to.matched.some(record => record.meta.requiresAuth) && firstAuth) {
 		store.dispatch('loadAuth');
 		firstAuth = false;
-		console.log(store.getters.isAuthenticated);
-	}
-	if (to.matched.some(record => record.meta.requiresAuth) && !store.getters.isAuthenticated) {
-		console.log(store.getters.isAuthenticated);
-		next({path: '/login'});
 	} else {
 		next();
 	}
@@ -68,7 +63,26 @@ const app = new Vue({
 	methods: {
 		logout: function () {
 			store.dispatch('logout');
-			router.push('/login');
+		},
+		refreshAuthorization() {
+		
 		}
+	},
+	created() {
+		console.log('created');
+		
+		(function () {
+			let originalFetch = fetch;
+			fetch = function () {
+				return originalFetch.apply(this, arguments).then(res => {
+					console.log(res.status);
+					if (res.status === 401) {
+						console.log('401 intercepted');
+						store.dispatch('loadAuth')
+					}
+					return res;
+				});
+			};
+		})();
 	}
 });

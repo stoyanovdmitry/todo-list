@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,12 +34,13 @@ public class AuthController {
 	@Autowired
 	private RefreshTokenRepository tokenRepository;
 
+	@CrossOrigin(origins = "http://localhost:8081", exposedHeaders = {"Access-Token", "Refresh-Token"})
 	@RequestMapping(method = RequestMethod.POST, value = "/refresh")
 	public void refreshAccessToken(HttpServletRequest req, HttpServletResponse res) {
 		String header = req.getHeader(JwtConstants.JWT_HEADER);
 
 		if (header == null || !header.startsWith(JwtConstants.JWT_PREFIX)) {
-			return;
+			throw new UnsupportedJwtException("Wrong refresh token. You need to login again");
 		}
 
 		String token = header.replace(JwtConstants.JWT_PREFIX, "");

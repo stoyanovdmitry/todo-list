@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-//		web.ignoring().antMatchers(HttpMethod.POST, "/users", "/token/**");
+		web.ignoring().antMatchers(HttpMethod.POST, "/users", "/token/refresh");
 		web.ignoring().antMatchers("/h2-console/**");
 	}
 
@@ -46,24 +46,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.cors()
 			.and()
 			.csrf().disable()
-			.cors();
-//			.authorizeRequests()
-//			.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
-//			.antMatchers("/users/{username}/**").access("principal == #username || hasRole('ROLE_ADMIN')")
-//			.antMatchers("/token/**").authenticated() //todo return bad credentials
-//			.anyRequest().authenticated()
-//			.and()
-//			.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-//			.and()
-//			.addFilter(jwtAuthenticationFilter())
-//			.addFilter(jwtAuthorizationFilter())
-			// this disables session creation on Spring Security
-//			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			.cors()
+			.and()
+			.authorizeRequests()
+			.anyRequest().permitAll()
+			.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+			.antMatchers("/users/{username}/**").access("principal == #username || hasRole('ROLE_ADMIN')")
+			.anyRequest().authenticated()
+			.and()
+			.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+			.and()
+			.addFilter(jwtAuthenticationFilter())
+			.addFilter(jwtAuthorizationFilter())
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
 		JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter();
+		authenticationFilter.setPostOnly(true);
 		authenticationFilter.setFilterProcessesUrl("/token/login");
 		return authenticationFilter;
 	}

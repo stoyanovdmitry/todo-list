@@ -75,6 +75,7 @@
 				const app = this;
 				const requestUrl = this.$parent.serverUrl + "/users/"
 					+ this.$parent.username + '/todos';
+				headers.set('Authorization', this.$store.getters.getAccessToken);
 				
 				fetch(requestUrl, {
 					method: 'GET',
@@ -152,7 +153,9 @@
 			}
 		},
 		created() {
-			this.loadTodos();
+			if (this.$store.getters.isAuthenticated) {
+				this.loadTodos();
+			}
 		}
 	}
 </script>
