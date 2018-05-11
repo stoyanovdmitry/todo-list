@@ -34,7 +34,6 @@ public class AuthController {
 	@Autowired
 	private RefreshTokenRepository tokenRepository;
 
-	@CrossOrigin(origins = "http://localhost:8081", exposedHeaders = {"Access-Token", "Refresh-Token"})
 	@RequestMapping(method = RequestMethod.POST, value = "/refresh")
 	public void refreshAccessToken(HttpServletRequest req, HttpServletResponse res) {
 		String header = req.getHeader(JwtConstants.JWT_HEADER);
