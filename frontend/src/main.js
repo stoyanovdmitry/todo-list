@@ -12,7 +12,7 @@ export {
 Vue.use(VueRouter);
 Vue.use(VueAutosize);
 
-// const mainPage = require('./components/NotFound').default;
+const notFoundPage = require('./components/NotFound').default;
 const mainPage = require('./components/TodosPage').default;
 const authPage = require('./components/AuthPage').default;
 
@@ -28,7 +28,8 @@ const router = new VueRouter({
 				requiresAuth: true
 			}
 		},
-		{path: '/login', component: authPage}
+		{path: '/login', component: authPage},
+		{path: '/**', component: notFoundPage}
 	]
 });
 
