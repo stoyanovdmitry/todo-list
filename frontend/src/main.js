@@ -30,7 +30,8 @@ const router = new VueRouter({
 		},
 		{path: '/login', component: authPage},
 		{path: '/**', component: notFoundPage}
-	]
+	],
+	mode: 'history'
 });
 
 let firstAuth = true;
