@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
+@Entity(name = "users")
 public class User {
 
 	@Id
