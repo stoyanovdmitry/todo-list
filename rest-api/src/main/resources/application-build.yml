@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    initialize: false
+    platform: postgresql
+    url: jdbc:postgresql://localhost:5432/todolistdb
+    username: postgres
+    password: 1
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+logging:
+  level: error
+
