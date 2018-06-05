@@ -1,1 +1,1 @@
-web: java -jar rest-api/target/rest-api-1.0-SNAPSHOT.jar
+web: java $JAVA_OPTS -jar rest-api/target/rest-api-1.0-SNAPSHOT.jar
