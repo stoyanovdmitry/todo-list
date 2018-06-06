@@ -45,7 +45,7 @@ router.beforeEach((to, from, next) => {
 	}
 });
 
-const serverUrl = 'http://localhost:8080';
+const serverUrl = process.env.API_URL;
 
 const app = new Vue({
 	el: '#app',

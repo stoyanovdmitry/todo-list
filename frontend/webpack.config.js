@@ -62,7 +62,8 @@ if (process.env.NODE_ENV === 'production') {
   module.exports.plugins = (module.exports.plugins || []).concat([
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: '"production"'
+        NODE_ENV: '"production"',
+        API_URL: 'window.location.protocol+"//"+window.location.host'
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -73,6 +74,15 @@ if (process.env.NODE_ENV === 'production') {
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
+    })
+  ])
+} else if (process.env.NODE_ENV === 'development') {
+  module.exports.plugins = (module.exports.plugins || []).concat([
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"development"',
+        API_URL: 'http://localhost:8080'
+      }
     })
   ])
 }
