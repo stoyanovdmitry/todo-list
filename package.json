@@ -2,6 +2,7 @@
   "name": "todo-list",
   "version": "0.0.1",
   "dependencies": {
-    "frontend": "file:frontend"
+    "frontend": "file:frontend",
+    "yarn": "^1.7.0"
   }
 }

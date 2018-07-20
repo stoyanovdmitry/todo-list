@@ -1,0 +1,55 @@
+.new-todo-input {
+  outline: 0;
+  resize: none;
+  height: 34px;
+  width: 100%
+}
+
+.btn-addnote {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 0;
+  background: #5cb85c;
+  outline: none !important
+}
+
+.btn-addnote:hover {
+  opacity: .9
+}
+
+.btn-addnote-symbol {
+  font-size: 1.45em;
+  position: relative;
+  top: -.55rem;
+  color: #fff
+}
+
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label:before {
+  background: #dee2e6
+}
+
+.custom-control-label {
+  position: absolute;
+}
+.custom-control-label:after {
+  top: .5rem;
+  left: -1.25rem;
+  background-size: 80% 80%
+}
+
+.custom-checkbox .custom-control-label:before {
+  border-radius: 1rem;
+  width: 1.5rem;
+  height: 1.5rem
+}
+
+.custom-checkbox .custom-control-label:hover:before {
+  border: 2px solid #007bff;
+  opacity: .9
+}
+
+.custom-control-label:before {
+  background: none;
+  border: 2px solid #dee2e6
+}
