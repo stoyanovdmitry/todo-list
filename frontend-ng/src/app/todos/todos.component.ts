@@ -28,6 +28,15 @@ export class TodosComponent implements OnInit {
     }
   }
 
+  updateTodo(todo: Todo, event: Event): void {
+    this.disableKey(event);
+    if (this.todoService.updateTodo(todo, event)) {
+
+    } else {
+      console.log('failed to updateTodo');
+    }
+  }
+
   // disables enter in textarea
   private disableKey(event: Event): void {
     event.stopPropagation();
