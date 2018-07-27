@@ -27,8 +27,16 @@ export class TodoService {
     return this.http.get<Todo[]>(this.url);
   }
 
-  updateTodo(todo: Todo, event: Event): boolean {
-    return true;
+  updateTodo(todo: Todo, event?: Event): void {
+    this.http.put(this.url + '/' + todo.id,
+      todo, {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json'
+        }),
+        observe: 'response'
+      }).subscribe(res => {
+      console.log(res);
+    });
   }
 
   get http(): HttpClient {

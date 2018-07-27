@@ -21,7 +21,7 @@
                [checked]="todo.completed" id="{{ todo.id }}">
         <label class="custom-control-label" for="{{ todo.id }}"></label>
       </div>
-      <textarea [(ngModel)]="todo.text" class="new-todo-input border-0 ml-3" placeholder="Todo..."></textarea>
+      <textarea [(ngModel)]="todo.text" (keydown)="updateTodo(todo, $event)" class="new-todo-input border-0 ml-3" placeholder="Todo..."></textarea>
     </div>
   </div>
 

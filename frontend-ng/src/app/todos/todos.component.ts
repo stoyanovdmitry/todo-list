@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Todo} from '../todo';
 import {TodoService} from '../todo.service';
+import {debounceTime} from "rxjs/operators";
 
 @Component({
   selector: 'app-todos',
@@ -30,19 +31,22 @@ export class TodosComponent implements OnInit {
 
   updateTodo(todo: Todo, event: Event): void {
     this.disableKey(event);
-    if (this.todoService.updateTodo(todo, event)) {
-
-    } else {
-      console.log('failed to updateTodo');
-    }
+    this.todoService.updateTodo(todo);
+    // if (this.todoService.updateTodo(todo, event)) {
+    //
+    // } else {
+    //   console.log('failed to updateTodo');
+    // }
   }
 
   // disables enter in textarea
   // todo change this method to decorator
   private disableKey(event: Event): void {
-    event.stopPropagation();
-    event.preventDefault();
-    event.returnValue = false;
+    if (event.key === 'Enter') {
+      event.stopPropagation();
+      event.preventDefault();
+      event.returnValue = false;
+    }
   }
 
   get todos(): Todo[] {
