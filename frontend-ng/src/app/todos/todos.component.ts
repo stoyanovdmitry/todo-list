@@ -16,16 +16,16 @@ export class TodosComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.todos = this.todoService.todos;
+    this.todoService.getTodos().subscribe(data => this.todos = data);
   }
 
   addTodo(text: string, event: Event): void {
     this.disableKey(event);
-    if (this.todoService.addTodo(text, event)) {
-      this.todoText = null;
-    } else {
-      console.log('failed to addTodo');
-    }
+
+    this.todoService.addTodo(text).subscribe(data => {
+      console.log(data);
+      this.todos.push(data);
+    });
   }
 
   updateTodo(todo: Todo, event: Event): void {
@@ -38,6 +38,7 @@ export class TodosComponent implements OnInit {
   }
 
   // disables enter in textarea
+  // todo change this method to decorator
   private disableKey(event: Event): void {
     event.stopPropagation();
     event.preventDefault();
