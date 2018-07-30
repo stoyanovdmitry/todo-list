@@ -6,7 +6,9 @@
       <button (click)="addTodo(todoText, $event)" class="mr-3 mt-2
 				 d-flex justify-content-center align-items-center
 				 btn-addnote"><span class="btn-addnote-symbol">+</span></button>
-      <textarea (keydown.enter)="addTodo(todoText, $event)" [(ngModel)]="todoText" class="new-todo-input border-0 mt-1" placeholder="Todo..."></textarea>
+      <textarea (keydown.enter)="addTodo(todoText, $event)"
+                (keydown.shift.enter)="addTodo(todoText, $event)"
+                [(ngModel)]="todoText" class="new-todo-input border-0 mt-1" placeholder="Todo..."></textarea>
     </div>
   </div>
 
@@ -17,11 +19,12 @@
 			p-2 mt-2 pb-3">
       <div class="custom-control custom-checkbox">
         <!--todo update todo on server when (change)-->
-        <input (change)="todo.completed = !todo.completed" class="custom-control-input" type="checkbox"
+        <input (change)="todo.completed = !todo.completed; updateTodo(todo, $event)" class="custom-control-input" type="checkbox"
                [checked]="todo.completed" id="{{ todo.id }}">
         <label class="custom-control-label" for="{{ todo.id }}"></label>
       </div>
-      <textarea [(ngModel)]="todo.text" (keydown)="updateTodo(todo, $event)" class="new-todo-input border-0 ml-3" placeholder="Todo..."></textarea>
+      <textarea (keyup)="updateTodo(todo, $event)" (keydown.enter)="disableKey($event)"
+                [(ngModel)]="todo.text" class="new-todo-input border-0 ml-3" placeholder="Todo..."></textarea>
     </div>
   </div>
 
@@ -31,11 +34,12 @@
 			border border-muted border-top-0 border-left-0 border-right-0
 			p-2 mt-2 pb-3">
       <div class="custom-control custom-checkbox">
-        <input (change)="todo.completed = !todo.completed" class="custom-control-input" type="checkbox"
+        <input (change)="todo.completed = !todo.completed; updateTodo(todo, $event)" class="custom-control-input" type="checkbox"
                [checked]="todo.completed" id="{{ todo.id }}">
         <label class="custom-control-label" for="{{ todo.id }}"></label>
       </div>
-      <textarea [(ngModel)]="todo.text" class="new-todo-input border-0 ml-3" placeholder="Todo..."></textarea>
+      <textarea (keyup)="updateTodo(todo, $event)" (keydown.enter)="disableKey($event)"
+                [(ngModel)]="todo.text" class="new-todo-input border-0 ml-3" placeholder="Todo..."></textarea>
     </div>
   </div>
 </div>
