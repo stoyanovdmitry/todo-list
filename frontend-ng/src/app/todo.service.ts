@@ -13,7 +13,7 @@ export class TodoService {
   constructor(private _http: HttpClient) {
   }
 
-  addTodo(text: string, event?: Event): Observable<Todo> {
+  addTodo(text: string): Observable<Todo> {
     return this.http.post<Todo>(this.url, {
       'text': text
     }, {
@@ -27,7 +27,7 @@ export class TodoService {
     return this.http.get<Todo[]>(this.url);
   }
 
-  updateTodo(todo: Todo, event?: Event): void {
+  updateTodo(todo: Todo): void {
     this.http.put(this.url + '/' + todo.id,
       todo, {
         headers: new HttpHeaders({
@@ -35,7 +35,23 @@ export class TodoService {
         }),
         observe: 'response'
       }).subscribe(res => {
-      console.log(res);
+      console.log('todo successfully updated');
+      // console.log(res);
+      // console.log('----------------------------------------------------');
+    });
+  }
+
+  deleteTodo(todo: Todo): void {
+    this.http.delete(this.url + '/' + todo.id,
+      {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json'
+        }),
+        observe: 'response'
+      }).subscribe(res => {
+      console.log('todo successfully deleted');
+      // console.log(res);
+      // console.log('----------------------------------------------------');
     });
   }
 

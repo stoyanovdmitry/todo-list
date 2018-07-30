@@ -33,7 +33,13 @@ export class TodosComponent implements OnInit {
 
   updateTodo(todo: Todo, event: KeyboardEvent): void {
     this.disableKey(event);
-    this.todoService.updateTodo(todo);
+    if (todo.text === '') {
+      this.todoService.deleteTodo(todo);
+      const index = this.todos.indexOf(todo);
+      this.todos.splice(index, 1);
+    } else {
+      this.todoService.updateTodo(todo);
+    }
   }
 
   // disables enter in textarea
