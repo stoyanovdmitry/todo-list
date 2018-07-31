@@ -7,17 +7,20 @@ import {RouterModule, Routes} from '@angular/router';
 import {AppComponent} from './app.component';
 import {TodosComponent} from './todos/todos.component';
 import {AuthorizationComponent} from './authorization/authorization.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 const routes: Routes = [
   {path: '', component: TodosComponent},
   {path: 'login', component: AuthorizationComponent},
+  {path: '**', component: NotFoundComponent},
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
     TodosComponent,
-    AuthorizationComponent
+    AuthorizationComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
