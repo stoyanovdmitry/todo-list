@@ -1,3 +1,29 @@
-<p>
-  authorization works!
-</p>
+<div class="container">
+  <div class="row auth d-flex justify-content-center align-items-center">
+    <div class="col-sm-5 ml-auto mr-auto border auth-block">
+      <form class="p-3" (ngSubmit)="login()" ngNativeValidate>
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input [(ngModel)]="username" type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="pwd">Password:</label>
+          <input [(ngModel)]="password" type="password" class="form-control" id="pwd" name="password" required>
+        </div>
+        <div class="form-group">
+          <span *ngIf="invalidData" class="text-danger">Something went wrong. Maybe username, maybe password, maybe something else, who knows?</span>
+        </div>
+        <div class="form-check">
+          <div class="btn-group">
+            <button class="btn btn-group btn-primary" type="submit">
+              <span>Login</span>
+            </button>
+            <button type="button" (click)="register()" class="btn btn-group btn-muted">
+              <span>Sign Up</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
