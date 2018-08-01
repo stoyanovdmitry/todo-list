@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {AuthorizationService} from '../authorization.service';
 
 @Component({
   selector: 'app-authorization',
@@ -11,15 +12,14 @@ export class AuthorizationComponent implements OnInit {
   private _password: string;
   private _invalidData = false;
 
-  constructor() {
+  constructor(private authorizationService: AuthorizationService) {
   }
 
   ngOnInit() {
   }
 
   private login() {
-    console.log(this.username);
-    console.log(this.password);
+    this.authorizationService.login(this.username, this.password);
   }
 
   private register() {

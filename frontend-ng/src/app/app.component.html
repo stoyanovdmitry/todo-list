@@ -2,7 +2,8 @@
   <header class="bg-dark">
     <nav class="container p-3 navbar navbar-expand-md navbar-dark">
       <a href="#" to="/" class="navbar-brand">
-        <span>TODOs</span>
+        <span *ngIf="!username">TODOs</span>
+        <span *ngIf="username">{{ username }}</span>
       </a>
     </nav>
   </header>
