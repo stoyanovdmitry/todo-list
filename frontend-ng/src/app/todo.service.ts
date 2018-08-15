@@ -1,16 +1,16 @@
 import {Injectable} from '@angular/core';
 import {Todo} from './todo';
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs/internal/Observable';
+import {AuthorizationService} from './authorization.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TodoService {
 
-  private url = 'http://localhost:8080/users/user/todos';
 
-  constructor(private _http: HttpClient) {
+  constructor(private _http: HttpClient, private _authorizationService: AuthorizationService) {
   }
 
   addTodo(text: string): Observable<Todo> {
@@ -36,8 +36,6 @@ export class TodoService {
         observe: 'response'
       }).subscribe(res => {
       console.log('todo successfully updated');
-      // console.log(res);
-      // console.log('----------------------------------------------------');
     });
   }
 
@@ -50,8 +48,6 @@ export class TodoService {
         observe: 'response'
       }).subscribe(res => {
       console.log('todo successfully deleted');
-      // console.log(res);
-      // console.log('----------------------------------------------------');
     });
   }
 
@@ -61,5 +57,9 @@ export class TodoService {
 
   set http(value: HttpClient) {
     this._http = value;
+  }
+
+  get url(): string {
+    return 'http://localhost:8080/users/' + this._authorizationService.username + '/todos';
   }
 }

@@ -22,8 +22,7 @@ export class AuthorizationComponent implements OnInit {
   }
 
   private register() {
-    console.log(this.username);
-    console.log(this.password);
+    this.authorizationService.signUp(this.username, this.password);
   }
 
   private validateData(): boolean {

@@ -8,6 +8,7 @@ import {Router} from '@angular/router';
 export class AuthorizationService {
 
   private loginUrl = 'http://localhost:8080/token/login';
+  private signUpUrl = 'http://localhost:8080/users';
   private refreshUrl = 'http://localhost:8080/token/refresh';
   private _invalidCredentials = false;
 
@@ -42,8 +43,26 @@ export class AuthorizationService {
     this.router.navigate(['login']);
   }
 
-  signUp() {
-
+  signUp(username: string, password: string) {
+    this.httpClient.post(this.signUpUrl, {
+      'username': username,
+      'password': password
+    }, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+      observe: 'response'
+    }).subscribe(res => {
+      console.log(res.status);
+      if (res.status === 200) {
+        this.login(username, password);
+      }
+    },
+      err => {
+        console.log('cant signup');
+        this.clearCookies();
+        this.invalidCredentials = true;
+      });
   }
 
   refreshToken() {
