@@ -95,6 +95,9 @@ export class AuthorizationService {
   }
 
   get username(): string {
+    if (!this._username) {
+      this._username = AuthorizationService.getCookie('username');
+    }
     return this._username;
   }
 

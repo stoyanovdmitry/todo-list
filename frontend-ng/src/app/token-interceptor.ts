@@ -27,7 +27,7 @@ export class TokenInterceptor implements HttpInterceptor {
           Authorization: token
         }
       });
-      this.authenticationService.username = AuthorizationService.getCookie('username');
+      // this.authenticationService.username = AuthorizationService.getCookie('username');
     }
 
     return next.handle(req);
