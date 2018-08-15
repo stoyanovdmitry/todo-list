@@ -53,11 +53,11 @@ export class AuthorizationService {
       }),
       observe: 'response'
     }).subscribe(res => {
-      console.log(res.status);
-      if (res.status === 200) {
-        this.login(username, password);
-      }
-    },
+        console.log(res.status);
+        if (res.status === 200) {
+          this.login(username, password);
+        }
+      },
       err => {
         console.log('cant signup');
         this.clearCookies();
@@ -66,7 +66,18 @@ export class AuthorizationService {
   }
 
   refreshToken() {
-    this.httpClient.post(this.refreshUrl, {}).subscribe();
+    this.httpClient.post(this.refreshUrl,
+      {},
+      {
+        observe: 'response'
+      }).subscribe(res => {
+      const accessToken = res.headers.get('Access-Token');
+      const refreshToken = res.headers.get('Refresh-Token');
+
+      this.fillCookies(this.username, accessToken, refreshToken);
+      this.router.navigate(['']);
+      this.invalidCredentials = false;
+    });
   }
 
   private fillCookies(username: string, accessToken: string, refreshToken: string): void {
