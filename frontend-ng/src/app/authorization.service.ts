@@ -9,6 +9,7 @@ export class AuthorizationService {
 
   private loginUrl = 'http://localhost:8080/token/login';
   private refreshUrl = 'http://localhost:8080/token/refresh';
+  private _invalidCredentials = false;
 
   private _username: string;
 
@@ -31,10 +32,13 @@ export class AuthorizationService {
       this._username = username;
       this.fillCookies(username, accessToken, refreshToken);
       this.router.navigate(['']);
+      this.invalidCredentials = false;
     });
   }
 
   logout() {
+    this.username = null;
+    this.clearCookies();
     this.router.navigate(['login']);
   }
 
@@ -53,6 +57,13 @@ export class AuthorizationService {
     document.cookie = 'refreshToken=' + refreshToken + '; path=/; expires=' + twoWeeks.toUTCString();
   }
 
+  private clearCookies() {
+    const date = new Date(new Date().getTime() - 1);
+    document.cookie = 'username=;' + 'expires=' + date.toUTCString();
+    document.cookie = 'accessToken=;' + 'expires=' + date.toUTCString();
+    document.cookie = 'refreshToken=;' + 'expires=' + date.toUTCString();
+  }
+
   static getCookie(value: string): string {
     const matches = document.cookie.match(new RegExp(
       '(?:^|; )' + value.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'
@@ -66,5 +77,13 @@ export class AuthorizationService {
 
   get username(): string {
     return this._username;
+  }
+
+  get invalidCredentials(): boolean {
+    return this._invalidCredentials;
+  }
+
+  set invalidCredentials(value: boolean) {
+    this._invalidCredentials = value;
   }
 }

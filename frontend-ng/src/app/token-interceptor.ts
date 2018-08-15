@@ -13,19 +13,20 @@ export class TokenInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     console.log('TokenInterceptor');
 
-    if (req.url.match('token/refresh')) {
-      req = req.clone({
-        setHeaders: {
-          Authorization: AuthorizationService.getCookie('refreshToken')
-        }
-      });
-    } else if (!req.url.match('token/login')) {
-      req = req.clone({
-        setHeaders: {
-          Authorization: AuthorizationService.getCookie('accessToken')
-        }
-      });
+    let token;
 
+    if (req.url.match('token/refresh')) {
+      token = AuthorizationService.getCookie('refreshToken');
+    } else if (!req.url.match('token/login')) {
+      token = AuthorizationService.getCookie('accessToken');
+    }
+
+    if (token !== undefined) {
+      req = req.clone({
+        setHeaders: {
+          Authorization: token
+        }
+      });
       this.authenticationService.username = AuthorizationService.getCookie('username');
     }
 

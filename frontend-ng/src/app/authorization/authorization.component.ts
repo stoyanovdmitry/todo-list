@@ -10,7 +10,6 @@ export class AuthorizationComponent implements OnInit {
 
   private _username: string;
   private _password: string;
-  private _invalidData = false;
 
   constructor(private authorizationService: AuthorizationService) {
   }
@@ -28,14 +27,8 @@ export class AuthorizationComponent implements OnInit {
   }
 
   private validateData(): boolean {
-    if (this.username !== '' && this.username !== undefined
-      && this.password !== '' && this.password !== undefined) {
-      this.invalidData = true;
-      return false;
-    }
-
-    this.invalidData = false;
-    return true;
+    return !(this.username !== '' && this.username !== undefined
+      && this.password !== '' && this.password !== undefined);
   }
 
   get username(): string {
@@ -55,10 +48,6 @@ export class AuthorizationComponent implements OnInit {
   }
 
   get invalidData(): boolean {
-    return this._invalidData;
-  }
-
-  set invalidData(value: boolean) {
-    this._invalidData = value;
+    return this.authorizationService.invalidCredentials;
   }
 }

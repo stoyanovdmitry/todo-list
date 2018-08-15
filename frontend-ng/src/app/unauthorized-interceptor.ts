@@ -14,10 +14,13 @@ export class UnauthorizedInterceptor implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    console.log('unauth-interceptor');
     return next.handle(req).pipe(catchError(err => {
       if (err.status === 401) {
         if (err.url.match('token/refresh')) {
           this.authenticationService.logout();
+        } else if (err.url.match('token/login')) {
+          this.authenticationService.invalidCredentials = true;
         } else {
           this.authenticationService.refreshToken();
         }

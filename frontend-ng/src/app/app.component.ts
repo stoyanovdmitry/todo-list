@@ -9,10 +9,14 @@ import {AuthorizationService} from './authorization.service';
 export class AppComponent {
   title = 'app';
 
-  constructor(private authorizationService: AuthorizationService) {
+  constructor(private _authorizationService: AuthorizationService) {
   }
 
   get username(): string {
-    return this.authorizationService.username;
+    return this._authorizationService.username;
+  }
+
+  get authorizationService(): AuthorizationService {
+    return this._authorizationService;
   }
 }
