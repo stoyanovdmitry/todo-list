@@ -7,18 +7,18 @@ import javax.transaction.Transactional;
 
 public interface RefreshTokenRepository extends Repository<RefreshToken, Integer> {
 
-	@Transactional
-	RefreshToken save(RefreshToken refreshToken);
+    @Transactional
+    RefreshToken save(RefreshToken refreshToken);
 
-	@Transactional
-	void deleteAll();
+    @Transactional
+    void deleteAll();
 
-	@Transactional
-	void deleteAllByUserUsername(String username);
+    @Transactional
+    void deleteAllByUserUsername(String username);
 
-	@Transactional
-	void delete(int id);
+    @Transactional
+    void delete(int id);
 
-	@Transactional
-	RefreshToken findByToken(String token);
+    @Transactional
+    RefreshToken findByToken(String token);
 }

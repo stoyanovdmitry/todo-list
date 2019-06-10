@@ -10,20 +10,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class TodoService {
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@Autowired
-	private TodoRepository todoRepository;
+    @Autowired
+    private TodoRepository todoRepository;
 
-	public Todo getTodoIfValid(int id, String username) {
-		User user = userService.getUserIfPresent(username);
-		Todo todo = todoRepository.findOne(	id);
+    public Todo getTodoIfValid(int id, String username) {
+        User user = userService.getUserIfPresent(username);
+        Todo todo = todoRepository.findOne(id);
 
-		if (user != todo.getUser()) {
-			throw new AccessDeniedException("You have no access to this resource");
-		}
+        if (user != todo.getUser()) {
+            throw new AccessDeniedException("You have no access to this resource");
+        }
 
-		return todo;
-	}
+        return todo;
+    }
 }

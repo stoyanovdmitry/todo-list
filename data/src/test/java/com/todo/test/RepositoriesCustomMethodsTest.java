@@ -20,74 +20,74 @@ import java.util.List;
 @DataJpaTest
 public class RepositoriesCustomMethodsTest {
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	@Autowired
-	private TodoRepository todoRepository;
+    @Autowired
+    private TodoRepository todoRepository;
 
-	@Autowired
-	private RefreshTokenRepository tokenRepository;
+    @Autowired
+    private RefreshTokenRepository tokenRepository;
 
-	@Before
-	public void setUp() {
-		User user1 = new User("user1", "pass");
-		User user2 = new User("user2", "pass");
+    @Before
+    public void setUp() {
+        User user1 = new User("user1", "pass");
+        User user2 = new User("user2", "pass");
 
-		userRepository.save(user1);
-		userRepository.save(user2);
+        userRepository.save(user1);
+        userRepository.save(user2);
 
-		todoRepository.save(new Todo("text1", user1));
-		todoRepository.save(new Todo("text2", user1));
-		todoRepository.save(new Todo("text1", user2));
-		todoRepository.save(new Todo("text2", user2));
+        todoRepository.save(new Todo("text1", user1));
+        todoRepository.save(new Todo("text2", user1));
+        todoRepository.save(new Todo("text1", user2));
+        todoRepository.save(new Todo("text2", user2));
 
-		tokenRepository.save(new RefreshToken(user1, "token1"));
-		tokenRepository.save(new RefreshToken(user1, "token2"));
-		tokenRepository.save(new RefreshToken(user1, "token3"));
-		tokenRepository.save(new RefreshToken(user2, "token4"));
-		tokenRepository.save(new RefreshToken(user2, "token5"));
-	}
+        tokenRepository.save(new RefreshToken(user1, "token1"));
+        tokenRepository.save(new RefreshToken(user1, "token2"));
+        tokenRepository.save(new RefreshToken(user1, "token3"));
+        tokenRepository.save(new RefreshToken(user2, "token4"));
+        tokenRepository.save(new RefreshToken(user2, "token5"));
+    }
 
-	@Test
-	public void getUserByName() {
-		Assert.assertFalse(userRepository.findByUsername("ogierke").isPresent());
-		Assert.assertTrue(userRepository.findByUsername("user1").isPresent());
-	}
+    @Test
+    public void getUserByName() {
+        Assert.assertFalse(userRepository.findByUsername("ogierke").isPresent());
+        Assert.assertTrue(userRepository.findByUsername("user1").isPresent());
+    }
 
-	@Test
-	public void getAllNotesByUsername() {
-		List<Todo> todos = todoRepository.getAllByUserUsername("user1");
-		Assert.assertEquals(2, todos.size());
-	}
+    @Test
+    public void getAllNotesByUsername() {
+        List<Todo> todos = todoRepository.getAllByUserUsername("user1");
+        Assert.assertEquals(2, todos.size());
+    }
 
-	@Test
-	public void findByTokenThanDelete() {
-		RefreshToken refreshToken = tokenRepository.findByToken("token2");
-		Assert.assertEquals("user1", refreshToken.getUser().getUsername());
+    @Test
+    public void findByTokenThanDelete() {
+        RefreshToken refreshToken = tokenRepository.findByToken("token2");
+        Assert.assertEquals("user1", refreshToken.getUser().getUsername());
 
-		tokenRepository.delete(refreshToken.getId());
+        tokenRepository.delete(refreshToken.getId());
 
-		refreshToken = tokenRepository.findByToken("token2");
-		Assert.assertNull(refreshToken);
-	}
+        refreshToken = tokenRepository.findByToken("token2");
+        Assert.assertNull(refreshToken);
+    }
 
-	@Test
-	public void deleteAllByUsernameThanDeleteAll() {
-		RefreshToken refreshToken = tokenRepository.findByToken("token1");
-		Assert.assertNotNull(refreshToken);
+    @Test
+    public void deleteAllByUsernameThanDeleteAll() {
+        RefreshToken refreshToken = tokenRepository.findByToken("token1");
+        Assert.assertNotNull(refreshToken);
 
-		tokenRepository.deleteAllByUserUsername(refreshToken.getUser().getUsername());
+        tokenRepository.deleteAllByUserUsername(refreshToken.getUser().getUsername());
 
-		refreshToken = tokenRepository.findByToken("token1");
-		Assert.assertNull(refreshToken);
+        refreshToken = tokenRepository.findByToken("token1");
+        Assert.assertNull(refreshToken);
 
-		refreshToken = tokenRepository.findByToken("token5");
-		Assert.assertNotNull(refreshToken);
+        refreshToken = tokenRepository.findByToken("token5");
+        Assert.assertNotNull(refreshToken);
 
-		tokenRepository.deleteAll();
+        tokenRepository.deleteAll();
 
-		refreshToken = tokenRepository.findByToken("token5");
-		Assert.assertNull(refreshToken);
-	}
+        refreshToken = tokenRepository.findByToken("token5");
+        Assert.assertNull(refreshToken);
+    }
 }

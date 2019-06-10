@@ -10,24 +10,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-	private final UserService userService;
+    private final UserService userService;
 
-	@Autowired
-	public UserController(UserRepository userRepository, UserService userService) {
-		this.userRepository = userRepository;
-		this.userService = userService;
-	}
+    @Autowired
+    public UserController(UserRepository userRepository, UserService userService) {
+        this.userRepository = userRepository;
+        this.userService = userService;
+    }
 
-	@RequestMapping(value = "/{username}",
-			method = RequestMethod.GET)
-	public User getUserByUsername(@PathVariable String username) {
-		return userService.getUserIfPresent(username);
-	}
+    @RequestMapping(value = "/{username}",
+            method = RequestMethod.GET)
+    public User getUserByUsername(@PathVariable String username) {
+        return userService.getUserIfPresent(username);
+    }
 
-	@RequestMapping(method = RequestMethod.POST)
-	public void registerUser(@RequestBody User user) {
-		userRepository.save(user);
-	}
+    @RequestMapping(method = RequestMethod.POST)
+    public void registerUser(@RequestBody User user) {
+        userRepository.save(user);
+    }
 }

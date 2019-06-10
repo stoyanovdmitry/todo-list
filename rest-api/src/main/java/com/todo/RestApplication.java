@@ -13,36 +13,36 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableJpaRepositories
 public class RestApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(RestApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(RestApplication.class, args);
+    }
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurerAdapter() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-						.allowedOrigins("http://localhost:8081", "http://localhost:4200")
-						.allowedMethods("POST", "GET", "PUT", "DELETE")
-						.exposedHeaders("Access-Token", "Refresh-Token");
-			}
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:8081", "http://localhost:4200")
+                        .allowedMethods("POST", "GET", "PUT", "DELETE")
+                        .exposedHeaders("Access-Token", "Refresh-Token");
+            }
 
-			@Override
-			public void addResourceHandlers(ResourceHandlerRegistry registry) {
-				final String[] CLASSPATH_RESOURCE_LOCATIONS = {
-						"classpath:/META-INF/resources/", "classpath:/resources/",
-						"classpath:/static/", "classpath:/public/" };
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                final String[] CLASSPATH_RESOURCE_LOCATIONS = {
+                        "classpath:/META-INF/resources/", "classpath:/resources/",
+                        "classpath:/static/", "classpath:/public/"};
 
-				if (!registry.hasMappingForPattern("/webjars/**")) {
-					registry.addResourceHandler("/webjars/**").addResourceLocations(
-							"classpath:/META-INF/resources/webjars/");
-				}
-				if (!registry.hasMappingForPattern("/**")) {
-					registry.addResourceHandler("/**").addResourceLocations(
-							CLASSPATH_RESOURCE_LOCATIONS);
-				}
-			}
-		};
-	}
+                if (!registry.hasMappingForPattern("/webjars/**")) {
+                    registry.addResourceHandler("/webjars/**").addResourceLocations(
+                            "classpath:/META-INF/resources/webjars/");
+                }
+                if (!registry.hasMappingForPattern("/**")) {
+                    registry.addResourceHandler("/**").addResourceLocations(
+                            CLASSPATH_RESOURCE_LOCATIONS);
+                }
+            }
+        };
+    }
 }

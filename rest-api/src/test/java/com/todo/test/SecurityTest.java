@@ -1,7 +1,6 @@
 package com.todo.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.todo.entity.User;
 import com.todo.security.jwt.JwtConstants;
 import com.todo.security.jwt.JwtGenerator;
 import org.junit.Test;
@@ -28,57 +27,57 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class SecurityTest {
 
-	@Autowired
-	private MockMvc mvc;
+    @Autowired
+    private MockMvc mvc;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-	@Test
-	public void getUser_withoutToken_thenIsUnauthorized() throws Exception {
-		mvc.perform(get("/users/user"))
-		   .andExpect(status().isUnauthorized());
-	}
+    @Test
+    public void getUser_withoutToken_thenIsUnauthorized() throws Exception {
+        mvc.perform(get("/users/user"))
+           .andExpect(status().isUnauthorized());
+    }
 
-	@Test
-	public void getUser_withToken_thenIsOk() throws Exception {
+    @Test
+    public void getUser_withToken_thenIsOk() throws Exception {
 
-		String token = getAccessToken("user");
+        String token = getAccessToken("user");
 
-		mvc.perform(get("/users/user")
-							.header("Authorization", JwtConstants.JWT_PREFIX + token))
-		   .andExpect(status().isOk());
-	}
+        mvc.perform(get("/users/user")
+                            .header("Authorization", JwtConstants.JWT_PREFIX + token))
+           .andExpect(status().isOk());
+    }
 
-	@Test
-	public void getUser_withToken_thenIsForbidden() throws Exception {
+    @Test
+    public void getUser_withToken_thenIsForbidden() throws Exception {
 
-		String token = getAccessToken("user");
+        String token = getAccessToken("user");
 
-		mvc.perform(get("/users/admin")
-							.header("Authorization", JwtConstants.JWT_PREFIX + token))
-		   .andExpect(status().isForbidden());
-	}
+        mvc.perform(get("/users/admin")
+                            .header("Authorization", JwtConstants.JWT_PREFIX + token))
+           .andExpect(status().isForbidden());
+    }
 
-	@Test
-	public void getToken_correctCredentials_thenIsOk() throws Exception {
+    @Test
+    public void getToken_correctCredentials_thenIsOk() throws Exception {
 
-		//need to use next line because of User password field is annotated by JsonProperty(write-only) and I did'nt found better solution
-		String jsonUser = "{\"username\":\"user\",\"password\":\"password\"}";
+        //need to use next line because of User password field is annotated by JsonProperty(write-only) and I did'nt found better solution
+        String jsonUser = "{\"username\":\"user\",\"password\":\"password\"}";
 
-		mvc.perform(post("/token/login").accept(MediaType.APPLICATION_JSON_UTF8)
-										.content(jsonUser))
-		   .andExpect(status().isOk());
-	}
+        mvc.perform(post("/token/login").accept(MediaType.APPLICATION_JSON_UTF8)
+                                        .content(jsonUser))
+           .andExpect(status().isOk());
+    }
 
-	private String getAccessToken(String username) {
-		UserDetails userDetails = mock(UserDetails.class);
-		when(userDetails.getUsername()).thenReturn(username);
+    private String getAccessToken(String username) {
+        UserDetails userDetails = mock(UserDetails.class);
+        when(userDetails.getUsername()).thenReturn(username);
 
-		Authentication authentication = mock(Authentication.class);
-		when(authentication.getPrincipal()).thenReturn(userDetails);
-		when(authentication.getAuthorities()).thenReturn(Collections.emptyList());
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(userDetails);
+        when(authentication.getAuthorities()).thenReturn(Collections.emptyList());
 
-		return JwtGenerator.getAccessToken(authentication);
-	}
+        return JwtGenerator.getAccessToken(authentication);
+    }
 }

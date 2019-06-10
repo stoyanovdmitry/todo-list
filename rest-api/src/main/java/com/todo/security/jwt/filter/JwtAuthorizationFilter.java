@@ -23,55 +23,55 @@ import static com.todo.security.jwt.JwtConstants.JWT_ADMIN;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-	public JwtAuthorizationFilter(AuthenticationManager authManager) {
-		super(authManager);
-	}
+    public JwtAuthorizationFilter(AuthenticationManager authManager) {
+        super(authManager);
+    }
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest req,
-									HttpServletResponse res,
-									FilterChain chain) throws IOException, ServletException {
-		String header = req.getHeader(JwtConstants.JWT_HEADER);
+    @Override
+    protected void doFilterInternal(HttpServletRequest req,
+                                    HttpServletResponse res,
+                                    FilterChain chain) throws IOException, ServletException {
+        String header = req.getHeader(JwtConstants.JWT_HEADER);
 
-		if (header == null || !header.startsWith(JwtConstants.JWT_PREFIX)) {
-			chain.doFilter(req, res);
-			return;
-		}
+        if (header == null || !header.startsWith(JwtConstants.JWT_PREFIX)) {
+            chain.doFilter(req, res);
+            return;
+        }
 
-		try {
-			UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-		} catch (JwtException e) {
-			res.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
-		}
+        try {
+            UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (JwtException e) {
+            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+        }
 
-		chain.doFilter(req, res);
-	}
+        chain.doFilter(req, res);
+    }
 
-	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-		String token = request.getHeader(JwtConstants.JWT_HEADER);
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+        String token = request.getHeader(JwtConstants.JWT_HEADER);
 
-		if (token != null) {
-			Claims body = Jwts.parser()
-							  .setSigningKey(JwtConstants.ACCESS_SECRET.getBytes())
-							  .parseClaimsJws(token.replace(JwtConstants.JWT_PREFIX, ""))
-							  .getBody();
+        if (token != null) {
+            Claims body = Jwts.parser()
+                              .setSigningKey(JwtConstants.ACCESS_SECRET.getBytes())
+                              .parseClaimsJws(token.replace(JwtConstants.JWT_PREFIX, ""))
+                              .getBody();
 
-			String username = body.getSubject();
+            String username = body.getSubject();
 
-			if (username != null) {
-				boolean admin = (boolean) body.get(JWT_ADMIN);
-				List<GrantedAuthority> authorityList = new ArrayList<>();
+            if (username != null) {
+                boolean admin = (boolean) body.get(JWT_ADMIN);
+                List<GrantedAuthority> authorityList = new ArrayList<>();
 
-				if (admin) {
-					authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-				}
+                if (admin) {
+                    authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                }
 
-				return new UsernamePasswordAuthenticationToken(username,
-															   null,
-															   authorityList);
-			}
-		}
-		return null;
-	}
+                return new UsernamePasswordAuthenticationToken(username,
+                                                               null,
+                                                               authorityList);
+            }
+        }
+        return null;
+    }
 }

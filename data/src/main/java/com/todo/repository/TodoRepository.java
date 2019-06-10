@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TodoRepository extends JpaRepository<Todo, Integer> {
 
-	List<Todo> getAllByUserUsername(String username);
+    List<Todo> getAllByUserUsername(String username);
 }

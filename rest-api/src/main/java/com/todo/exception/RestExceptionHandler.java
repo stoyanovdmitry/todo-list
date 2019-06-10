@@ -12,13 +12,13 @@ import java.io.IOException;
 @RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = JwtException.class)
-	public void handleJsonExceptions(HttpServletResponse res) throws IOException {
-		res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-	}
+    @ExceptionHandler(value = JwtException.class)
+    public void handleJsonExceptions(HttpServletResponse res) throws IOException {
+        res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+    }
 
-	@ExceptionHandler(value = DataIntegrityViolationException.class)
-	public void handleUserAlreadyExist(RuntimeException e, HttpServletResponse res) throws IOException {
-		res.sendError(HttpServletResponse.SC_CONFLICT, "Couldn't register, change your username");
-	}
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    public void handleUserAlreadyExist(RuntimeException e, HttpServletResponse res) throws IOException {
+        res.sendError(HttpServletResponse.SC_CONFLICT, "Couldn't register, change your username");
+    }
 }

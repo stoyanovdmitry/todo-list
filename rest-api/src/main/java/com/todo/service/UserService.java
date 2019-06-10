@@ -11,19 +11,19 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-	@Autowired
-	public UserService(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-	public User getUserIfPresent(String username) {
-		Optional<User> optionalUser = userRepository.findByUsername(username);
+    public User getUserIfPresent(String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
 
-		if (!optionalUser.isPresent())
-			throw new NotFoundException("User with current username is not found");
+        if (!optionalUser.isPresent())
+            throw new NotFoundException("User with current username is not found");
 
-		return optionalUser.get();
-	}
+        return optionalUser.get();
+    }
 }

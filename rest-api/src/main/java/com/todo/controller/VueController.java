@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class VueController {
 
-	@RequestMapping("/**/{path:[^\\\\.]+}")
-	public String vueIndexPage() {
-		return "forward:/";
-	}
+    @RequestMapping("/**/{path:[^\\\\.]+}")
+    public String vueIndexPage() {
+        return "forward:/";
+    }
 }
